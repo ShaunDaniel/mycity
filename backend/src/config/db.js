@@ -11,3 +11,4 @@ mongoose.connect(dbURL).then(() => {
     console.error('Failed to connect to MongoDB:', error);
 });
 
+
