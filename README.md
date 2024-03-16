@@ -27,6 +27,9 @@ MyCityApp is a web application that empowers citizens to report civic issues in 
 - **Authentication**: Passport.js
 - **Deployment**:
 
+## Screenshots
+![Screenshot1](./screenshots/image.png)
+
 ## Getting Started
 
 ### Prerequisites
