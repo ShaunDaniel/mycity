@@ -21,7 +21,7 @@ MyCityApp is a web application that empowers citizens to report civic issues in 
 
 ## Technologies Used
 
-- **Frontend**: React.js
+- **Frontend**: React.js,Axios
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Authentication**: Passport.js

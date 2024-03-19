@@ -19,7 +19,7 @@ passport.use(
       scope: ["profile", "email"],
     },
     function verify(issuer, profile, cb) {
-      User.findOne({ googleId: profile.id })
+      User.findOne({ googleid: profile.id })
         .then((user) => {
           if (!user) {
             var newUser = new User({
@@ -33,13 +33,7 @@ passport.use(
               .then((savedUser) => cb(null, savedUser))
               .catch((err) => cb(err));
           } else {
-            user.first_name = profile.name.givenName;
-            user.last_name = profile.name.familyName;
-            user.email = profile.emails[0].value;
-            user
-              .save()
-              .then((updatedUser) => cb(null, updatedUser))
-              .catch((err) => cb(err));
+            cb(null, user);
           }
         })
         .catch((err) => cb(err));
@@ -61,7 +55,7 @@ router.get('/oauth2/redirect/google', passport.authenticate('google', {
       cb(null, { id: user.id, username: user.username, name: user.name });
     });
   });
-  
+
   passport.deserializeUser(function(user, cb) {
     process.nextTick(function() {
       return cb(null, user);
@@ -69,4 +63,4 @@ router.get('/oauth2/redirect/google', passport.authenticate('google', {
   });
 
 
-module.exports = router;
+  module.exports = router;

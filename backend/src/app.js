@@ -4,6 +4,7 @@ const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const logger = require('morgan');
 const passport = require('passport');
+const cors = require('cors');
 require('dotenv').config();
 
 
@@ -23,7 +24,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
@@ -32,7 +36,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/users", userRouter);
+app.use("/api/users", userRouter);
 app.use("/issues", issueRouter);
 app.use("/", authRouter);
 app.use("/", indexRouter);

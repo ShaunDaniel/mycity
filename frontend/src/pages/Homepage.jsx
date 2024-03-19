@@ -31,7 +31,7 @@ function Homepage() {
       </Stack>
       
       <Stack w={"100%"} h={"fit-content"} justifyContent={'space-around'} >
-        <Text alignSelf={'center'} fontSize={{ base: '0.5rem', sm: '4rem', lg: '1.5rem', xl: '2rem' }} py={5}>
+        <Text fontSize={{ base: '0.5rem', sm: '4rem', lg: '1.5rem', xl: '2rem' }} py={7} px={10}>
           Why <strong>MyCity?</strong>
         </Text>
 
