@@ -1,21 +1,71 @@
-const express = require('express');
+const express = require("express");
+const User = require("../models/user");
+const cities = require("../../data/state_city_data.json");
+const bcrypt = require("bcrypt");
+const LocalStrategy = require("passport-local").Strategy;
+const passport = require("passport");
+const isAuthenticated = require('../middlewares/isAuthenticated');
 const router = express.Router();
-const User = require('../models/user');
+
+router.get("/user-details", isAuthenticated, (req, res) => {
+    if (req.user) {
+        res.json(req.user);
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+});
+
+
+
+router.get("/email-exists/:email", (req, res) => {
+    const { email } = req.params;
+    User.findOne({ email })
+        .then((user) => {
+            res.json({ exists: Boolean(user) });
+        })
+        .catch((err) => {
+            res.status(400).json(err);
+        });
+});
 
 // Login route
-router.post('/login', (req, res) => {
-    res.send("Login route")
+router.post('/login', passport.authenticate('local'), (req, res) => {
+    if(req.user){
+        res.status(200).json({'_id':req.user.id,'firstName':req.user.firstName,'lastName':req.user.lastName,'email':req.user.email,'city':req.user.city,'state':req.user.state});
+    }
+    else{
+        res.status(401).json({message:'Invalid credentials'});
+    }
+});
+
+router.get('/logout', (req, res,next) => {
+    req.logout((err) => {
+        if (err) {
+          return res.status(500).json({ error: 'Failed to log out' });
+        }
+        req.session = null;
+        res.clearCookie('connect.sid');
+        res.send({
+          message: 'Logged out',
+        })
+      });
 });
 
 // Register route
-router.post('/register', (req, res) => {
-    console.log(req.body)
+router.post("/register", (req, res) => {
     const user = new User(req.body);
-    user.save().then((user) => {
-        res.json(user);
-    }).catch((err) => {
-        res.status(400).json(err);
-    });
+    user
+        .save()
+        .then((user) => {
+            res.status(201).send("Registered successfully");
+        })
+        .catch((err) => {
+            res.status(400).json(err);
+        });
+});
+
+router.get("/cities", (req, res) => {
+    res.json(cities);
 });
 
 module.exports = router;

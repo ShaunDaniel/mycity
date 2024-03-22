@@ -3,8 +3,10 @@ import HomepageFeatureTab from '../components/HomepageFeatureTab'
 import { useNavigate } from 'react-router-dom';
 
 function Homepage() {
-
   const navigate = useNavigate();
+
+  console.log(sessionStorage.getItem('data'));  
+
   const handleGetStarted = () => {
     navigate('/login');
   };
