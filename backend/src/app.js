@@ -17,10 +17,8 @@ const userRouter = require("./routes/userRoutes");
 const issueRouter = require("./routes/issueRoutes");
 const authRouter = require('./routes/auth');
 
-
-
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3000;
 
 // Enable rate limiting
 const limiter = rateLimit({
@@ -54,7 +52,7 @@ app.use(logger('dev'));
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
 app.use(express.static(path.join(__dirname, 'public'))); 
-app.use(cors({ credentials: true, origin: 'http://localhost:3000',methods: 'GET,HEAD,PUT,PATCH,POST,DELETE' })); 
+app.use(cors()); 
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -82,6 +80,8 @@ passport.deserializeUser(async function(id, cb) {
 app.use("/api/users", userRouter);
 app.use("/issues", issueRouter);
 app.use("/", authRouter);
+
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
