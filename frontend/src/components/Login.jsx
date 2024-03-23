@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Box, Stack, FormControl, FormLabel, FormErrorMessage, Alert, AlertIcon, AlertTitle, AlertDescription, Input, Spinner, Button, Text, Heading } from '@chakra-ui/react';
+import { Box, Stack, FormControl, FormLabel, FormErrorMessage,Input, Spinner, Button, Text, Heading } from '@chakra-ui/react';
 import userService from '../services/userService';
-import axios from 'axios';
 
 function Login() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFormError, setIsFormError] = useState(false);
+  const [googleAccountError, setGoogleAccountError] = useState(false);
   const [formIsEmpty, setFormIsEmpty] = useState(false);
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const navigate = useNavigate();
@@ -20,10 +20,16 @@ function Login() {
     }));
   }
 
+  useEffect(() => {
+    const data = sessionStorage.getItem('data');
+    if (data) {
+      navigate('/');
+    }
+  }, [navigate]);
+
   const handleSubmit = (event) => {
     setIsLoading(true);
     event.preventDefault();
-    console.log(credentials)
     if (credentials.email.trim() === '' || credentials.password.trim() === '') {
       setIsLoading(false);
       setFormIsEmpty(true);
@@ -33,22 +39,35 @@ function Login() {
       return;
     }
 
-    userService.login(credentials, { withCredentials: true }).then((res) => {
-      if (res.status === 200) {
-        navigate('/');
-        window.location.reload();
-        sessionStorage.setItem('data', JSON.stringify(res.data));
+    userService.isGoogleAccount(credentials.email).then((res) => {
+      if(res.data.exists){
+        setGoogleAccountError(true);
         setIsLoading(false);
-        setIsFormError(false);
-
-      } else {
-        setIsLoading(false);
-        setIsFormError(true);
+        return;
       }
-    }).catch((err) => {
-      setIsLoading(false);
-      setIsFormError(true);
-    });
+      else{
+        setGoogleAccountError(false);
+        userService.login(credentials, { withCredentials: true }).then((res) => {
+          if (res.status === 200) {
+            navigate('/');
+            window.location.reload();
+            sessionStorage.setItem('data', JSON.stringify(res.data));
+            setIsLoading(false);
+            setIsFormError(false);
+    
+          } else {
+            setIsLoading(false);
+            setIsFormError(true);
+          }
+        }).catch((err) => {
+          setIsLoading(false);
+          setIsFormError(true);
+        });
+      }
+    }).catch((err) => {}  );
+    
+    
+
   }
 
 
@@ -56,9 +75,10 @@ function Login() {
     <Box maxW={{ base: 'lg', md: "md", lg: 'sm' }} h={'fit-content'} mx="auto" mt={8} p={4}>
       <Stack spacing={4}>
         <Heading>Login</Heading>
-        <FormControl isInvalid={isFormError || formIsEmpty}>
+        <FormControl isInvalid={isFormError || formIsEmpty || googleAccountError }>
           {isFormError && <FormErrorMessage>Invalid Credentials</FormErrorMessage>}
           {formIsEmpty && <FormErrorMessage>Fill all the details before submitting</FormErrorMessage>}
+          {googleAccountError && <FormErrorMessage>Account already connected with Google!<br/> Please Login using Google</FormErrorMessage>}
 
         </FormControl>
 
@@ -70,11 +90,11 @@ function Login() {
           <FormLabel>Password</FormLabel>
           <Input id="password" type="password" placeholder="Enter your password" onChange={handleChange} />
         </FormControl>
-        <Button colorScheme="blue" size="lg" isFullWidth onClick={handleSubmit}>
+        <Button colorScheme="blue" size="lg" onClick={handleSubmit}>
           {isLoading ? <Spinner /> : 'Sign in'}
         </Button>
         <Text textAlign="center">Or sign in with</Text>
-        <Button colorScheme="red" size="lg" isFullWidth onClick={() => { window.location.href = 'http://localhost:3001/login/federated/google' }}>
+        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = 'http://localhost:3001/login/federated/google' }}>
           Sign in with Google
         </Button>
         <Text textAlign="center">New user? <a href="/register/1">Register here</a></Text>

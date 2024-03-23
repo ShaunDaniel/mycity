@@ -20,10 +20,16 @@ passport.use(
       callbackURL: "/oauth2/redirect/google",
       scope: ["profile", "email"],
     },
-    function verify(issuer, profile, cb) {
-      User.findOne({ googleid: profile.id })
+    function verify(issuer, profile, done) {
+      User.findOne({ email: profile.emails[0].value })
         .then((user) => {
-          if (!user) {
+          if (user) {
+            user.googleid = profile.id;
+            user.save()
+              .then((updatedUser) => done(null, updatedUser))
+              .catch((err) => done(err));
+          } else {
+            // Create a new user
             var newUser = new User({
               googleid: profile.id,
               firstName: profile.name.givenName,
@@ -34,13 +40,11 @@ passport.use(
             });
             newUser
               .save()
-              .then((savedUser) => cb(null, savedUser))
-              .catch((err) => cb(err));
-          } else {
-            cb(null, user);
+              .then((savedUser) => done(null, savedUser))
+              .catch((err) => done(err));
           }
         })
-        .catch((err) => cb(err));
+        .catch((err) => done(err));
     }
   )
 );
@@ -81,7 +85,6 @@ router.get('/oauth2/redirect/google', passport.authenticate('google', {
 }), (req, res) => {
   // Set a session variable to indicate login via Google
   req.session.loginMethod = 'Google';
-  console.log(req.user)
   res.redirect('http://localhost:3000/');
 }  
 );

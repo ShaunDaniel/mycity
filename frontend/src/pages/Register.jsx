@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Heading, Button} from '@chakra-ui/react'
+import { Box, Heading, Button,Text} from '@chakra-ui/react'
 import userService from '../services/userService'
 import RegisterFormComponent from '../components/RegisterFormComponent';
 import { useNavigate } from 'react-router-dom';
@@ -11,8 +11,8 @@ function Register() {
     lastName: '',
     email: '',
     password: '',
-    city: '',
-    state:''
+    city: '-',
+    state:'-'
   });
   const navigate = useNavigate();
 
@@ -21,10 +21,25 @@ function Register() {
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
 
-
+  const passwordValidator = (password) => {
+    if (password.length < 8) {
+      setPasswordError('Password should be at least 8 characters long');
+    } else if (!/[a-z]/.test(password)) {
+      setPasswordError('Password should contain at least one lowercase letter');
+    } else if (!/[A-Z]/.test(password)) {
+      setPasswordError('Password should contain at least one uppercase letter');
+    } else if (!/[0-9]/.test(password)) {
+      setPasswordError('Password should contain at least one number');
+    } else {
+      setPasswordError('');
+    }
+  }
 
   const handleChange = (e) => {
-    
+    if (e.target.id === 'password'){
+      passwordValidator(e.target.value);
+    }
+
     if (e.target.id === 'email') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(e.target.value)) {
@@ -33,20 +48,9 @@ function Register() {
         setEmailError('');
       }
     }
-    // Password validation
-  if (e.target.id === 'password') {
-    if (e.target.value.length < 8) {
-      setPasswordError('Password should be at least 8 characters long');
-    } else if (!/[a-z]/.test(e.target.value)) {
-      setPasswordError('Password should contain at least one lowercase letter');
-    } else if (!/[A-Z]/.test(e.target.value)) {
-      setPasswordError('Password should contain at least one uppercase letter');
-    } else if (!/[0-9]/.test(e.target.value)) {
-      setPasswordError('Password should contain at least one number');
-    } else {
-      setPasswordError('');
-    }
-  }
+    
+
+    
 
     setUser({
       ...user,
@@ -56,15 +60,29 @@ function Register() {
 
 
   const formSubmitHandler = (e) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!user.firstName || !user.lastName || !user.email || !user.password) {
       alert('Please fill all the fields');
       return;
     }
+
+    if (firstNameError || lastNameError || emailError || passwordError) {
+      alert('Please correct the errors before submitting');
+      return;
+    }
+    if (!emailRegex.test(user.email)) {
+      setEmailError('Please enter a valid email address');
+      return
+    }
+
+
+    
     else{
       setUser({...user,email:user.email.toLowerCase()})
-      e.preventDefault();
       userService.userExists(user.email).then((res)=>{
         if(res.data.exists){
+          console.log("email exists")
           setEmailError('Email already exists');
           return;
         }
@@ -102,8 +120,7 @@ function Register() {
   return (
     <div>
       <Box maxW={{ base: "80vw", xl: "md" }} mx="auto" my={8} p={{ base: "7rem", xl: "3rem" }} borderWidth={1} borderRadius="md" boxShadow="md">
-        <Heading textAlign={'center'} >Register</Heading>
-
+        <Heading mb={5} >Register</Heading>
         <RegisterFormComponent
           id="firstName"
           label="First Name"
@@ -150,6 +167,7 @@ function Register() {
           error={passwordError}
           isRequired
         />
+        <Text cursor={'pointer'} onClick={()=>{navigate('/login')}} mb={5}>Already have an account?</Text>
         
 
         <Button colorScheme="blue" fontSize={{ base: 'xx-large', lg: 'md' }} py={{ base: '2rem', lg: '1rem' }} type="submit" width="full" onClick={formSubmitHandler}>

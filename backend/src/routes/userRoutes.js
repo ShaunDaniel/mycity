@@ -8,9 +8,12 @@ const isAuthenticated = require('../middlewares/isAuthenticated');
 const router = express.Router();
 
 router.get("/user-details", isAuthenticated, (req, res) => {
-    if (req.user) {
-        res.json(req.user);
-    } else {
+    if(isAuthenticated){
+        if (req.user) {
+            res.json(req.user);
+        } 
+    }
+   else {
         res.status(404).json({ message: 'User not found' });
     }
 });
@@ -53,19 +56,49 @@ router.get('/logout', (req, res,next) => {
 
 // Register route
 router.post("/register", (req, res) => {
-    const user = new User(req.body);
-    user
-        .save()
+    User.findOne({ email:req.body.email }).then((user) => {
+        if (user) {
+            User.updateOne({ email: req.body.email }, { $set: req.body }).then((user) => {
+                console.log("User updated successfully")
+                res.status(200).send(req.body);
+            }).catch((err) => {
+                res.status(400).json(err);
+            });
+            return;
+        }
+        else{
+            const user = new User(req.body);
+            user
+                .save()
+                .then((user) => {
+                    res.status(201).send(user);
+                })
+                .catch((err) => {
+                    res.status(400).json(err);
+                });
+        }
+
+    });
+    
+});
+
+
+router.get("/cities", (req, res) => {
+    res.json(cities);
+});
+
+router.get("/google-account/:email", (req, res) => {
+    User.findOne({ email: req.params.email })
         .then((user) => {
-            res.status(201).send("Registered successfully");
+            if (user.googleid) {
+                res.json({ exists: true });
+            } else {
+                res.json({ exists: false });
+            }
         })
         .catch((err) => {
             res.status(400).json(err);
         });
-});
-
-router.get("/cities", (req, res) => {
-    res.json(cities);
 });
 
 module.exports = router;

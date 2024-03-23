@@ -11,7 +11,8 @@ import { useNavigate } from 'react-router-dom';
 
 function FinishRegister(props) {
     const location = useLocation();
-    const [user, setUser] = useState(location.state.user)
+    const [user, setUser] = useState({})
+    const userFromRegister = location.state || {}
     const [cities, setCities] = React.useState([]);
     const [selectedStateCities, setselectedStateCities] = React.useState([]);
     const [cityError, setCityError] = React.useState(false);
@@ -20,20 +21,27 @@ function FinishRegister(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!user) {
-            userService.user_details().then((res) => {
-                setUser({ ...user, state: res.data.state })
-            }
-            ).catch((err) => {
-                console.log(err)
-            })
+
+        const user_data = JSON.parse(sessionStorage.getItem('data'));
+
+        if(userFromRegister.user){
+            setUser(userFromRegister.user)
+        }
+        else if(user_data){
+            setUser(user_data)       
+        }
+        else{
+            navigate('/register/1')
         }
         userService.fetchCities().then((res) => {
             setCities(res.data.states)
         }).catch((err) => {
             console.log(err)
         })
-    }, []);
+
+
+
+    }, [navigate, userFromRegister.user]);
 
 
     const updateCityList = (e) => {
@@ -46,26 +54,33 @@ function FinishRegister(props) {
     };
 
     const handleFormSubmit = (e) => {
-        e.preventDefault();
-        if (!user.state) {
+        console.log("Inside handleFormSubmit")
+        
+        if (user.state === "-") {
             setStateError(true);
         } else {
             setStateError(false);
         }
 
-        if (!user.city) {
+        if (user.city === "-") {
             setCityError(true);
         } else {
             setCityError(false);
         }
 
-
-        if (user.state && user.city) {
+        if (user.state!=='-' && user.city!=='-') {
             setStateError(false);
             setCityError(false);
+            console.log(user)
             userService.register(user).then(
                 (response) => {
-                    navigate('/login')
+                    console.log(response)
+                    if(response.status===201 || response.status===200){
+                        sessionStorage.setItem('data', JSON.stringify(response.data));
+                        navigate('/')
+                        window.location.reload();
+                    }
+                   
                 }
             ).catch((err) => {
                 console.log(err)

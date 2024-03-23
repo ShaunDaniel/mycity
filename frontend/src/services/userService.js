@@ -5,8 +5,12 @@ function register(user) {
   return axios.post(`${API_URL}/register`, user);
 }
 
+function isGoogleAccount(email) {
+  return axios.get(`${API_URL}/google-account/${email}`);
+
+}
+
 function login(credentials) {
-  console.log({username:credentials.email,password:credentials.password})
   return axios.post(`${API_URL}/login`,{username:credentials.email,password:credentials.password});
 }
 
@@ -15,7 +19,7 @@ function logout() {
 }
 
 function user_details() {
-  return axios.get(`${API_URL}/user_details`,{withCredentials:true});
+  return axios.get(`${API_URL}/user-details`,{withCredentials:true});
 }
 
 
@@ -46,6 +50,6 @@ const userService = {
   fetchCities,
   user_details,
   logout,
-
+  isGoogleAccount
 };
 export default userService;

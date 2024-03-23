@@ -1,11 +1,39 @@
 import {  Stack, Image, Flex, Text, Heading, Button } from '@chakra-ui/react'
 import HomepageFeatureTab from '../components/HomepageFeatureTab'
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import userService from '../services/userService';
 
 function Homepage() {
+  
   const navigate = useNavigate();
+  const userDataLoad = async () => {
+    if(sessionStorage.getItem('data') === null){
+        try {
+            const data = await userService.user_details();
+            if(data.status !== 404){
+                sessionStorage.setItem('data',JSON.stringify(data.data));
+            }
+        } catch(err) {
+            console.error(err);
+        }
+    }
+}
 
-  console.log(sessionStorage.getItem('data'));  
+  useEffect(() => {
+    userDataLoad().then(() => {
+      const user_data = JSON.parse(sessionStorage.getItem('data'));
+      if (user_data.city==='-'|| user_data.state==='-'|| user_data.city===undefined|| user_data.state===undefined) {
+        navigate('/register/2');
+      }
+      else{
+        return;
+      }
+  });
+    
+  }, []);
+
+
 
   const handleGetStarted = () => {
     navigate('/login');
