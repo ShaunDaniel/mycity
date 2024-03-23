@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:3001/api/users';
+const API_URL = 'https://mycity-backend.onrender.com/api/users';
 
 function register(user) {
   return axios.post(`${API_URL}/register`, user);
