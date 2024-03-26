@@ -8,10 +8,10 @@ const isAuthenticated = require('../middlewares/isAuthenticated');
 const router = express.Router();
 
 router.get("/user-details", isAuthenticated, (req, res) => {
+    console.log("Inside user-details")
+    console.log(req.user)
     if(isAuthenticated){
-        if (req.user) {
             res.json(req.user);
-        } 
     }
    else {
         res.status(404).json({ message: 'User not found' });
@@ -55,7 +55,7 @@ router.get('/logout', (req, res,next) => {
 });
 
 // Register route
-router.post("/register", (req, res) => {
+router.post("/register",(req, res) => {
     User.findOne({ email:req.body.email }).then((user) => {
         if (user) {
             User.updateOne({ email: req.body.email }, { $set: req.body }).then((user) => {

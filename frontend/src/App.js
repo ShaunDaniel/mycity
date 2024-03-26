@@ -1,6 +1,6 @@
 import "./App.css";
 import { ChakraProvider } from "@chakra-ui/react";
-
+import { useEffect, useState } from "react";
 import { Routes, Route } from 'react-router-dom';
 import Login from "./components/Login";
 import Navbar from "./components/Nav";
@@ -9,8 +9,31 @@ import Homepage from "./pages/Homepage";
 import theme from "./theme";
 import Footer from "./components/Footer";
 import FinishRegister from "./pages/FinishRegister";
+import userService from "./services/userService.js";
+import UserContext from './components/UserContext';
+
 function App() {
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+      if(sessionStorage.getItem('user-data')){
+        setUser(JSON.parse(sessionStorage.getItem('user-data')));
+      }
+      else{
+        userService.user_details()
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch(() => {
+          setUser(null);
+        });
+      }
+    }, []);
+
+
   return (
+    <UserContext.Provider value={user}>
     <ChakraProvider theme={theme}>
         <Navbar/>
         <Routes>
@@ -21,6 +44,7 @@ function App() {
         </Routes>
         <Footer/>
     </ChakraProvider>
+    </UserContext.Provider>
   );
 }
 

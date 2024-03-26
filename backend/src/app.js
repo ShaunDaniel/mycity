@@ -6,7 +6,6 @@ const SQLiteStore = require('connect-sqlite3')(session);
 const logger = require('morgan');
 const passport = require('passport');
 const cors = require('cors');
-const csurf = require('csurf');
 const helmet = require('helmet');
 const User = require('./models/user');
 const rateLimit = require("express-rate-limit");
@@ -27,10 +26,7 @@ const limiter = rateLimit({
     max: 100 // limit each IP to 100 requests per windowMs
 });
 
-// Enable CSRF protection in production environment
-if (process.env.NODE_ENV !== 'development') {
-    app.use(csurf());
-}
+
 
 // Middleware
 app.use("/", limiter); // Apply rate limiting middleware
@@ -48,17 +44,35 @@ app.use(helmet.contentSecurityPolicy({
         upgradeInsecureRequests: [],
     }
 }));
+const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app'];
 
+app.use(cors({
+    origin: function(origin, callback){
+      // allow requests with no origin (like mobile apps or curl requests)
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.indexOf(origin) === -1){
+        var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true
+}));
 app.use(logger('dev')); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
 app.use(express.static(path.join(__dirname, 'public'))); 
-app.use(cors()); 
+app.use(cors({
+    origin: ['https://mycity-omega.vercel.app','http://localhost:3000/'],
+    credentials: true
+  }));
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL })
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
+    cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 app.use(passport.initialize()); 
 app.use(passport.session());
@@ -78,7 +92,7 @@ passport.deserializeUser(async function(id, cb) {
 });
 
 // Routes
-app.use("/api/users", userRouter);
+app.use("/api/users",userRouter);
 app.use("/issues", issueRouter);
 app.use("/", authRouter);
 

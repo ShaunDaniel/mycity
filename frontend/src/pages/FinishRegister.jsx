@@ -4,7 +4,8 @@ import userService from '../services/userService'
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import { useContext } from 'react';
+import UserContext from '../components/UserContext';
 
 
 
@@ -19,10 +20,11 @@ function FinishRegister(props) {
     const [stateError, setStateError] = React.useState(false);
 
     const navigate = useNavigate();
+    const user_data = useContext(UserContext);
 
     useEffect(() => {
 
-        const user_data = JSON.parse(sessionStorage.getItem('user-data'));
+
 
         if(userFromRegister.user){
             setUser(userFromRegister.user)
@@ -41,7 +43,7 @@ function FinishRegister(props) {
 
 
 
-    }, [navigate, userFromRegister.user]);
+    }, []);
 
 
     const updateCityList = (e) => {
@@ -74,11 +76,16 @@ function FinishRegister(props) {
             console.log(user)
             userService.register(user).then(
                 (response) => {
-                    console.log(response)
                     if(response.status===201 || response.status===200){
-                        sessionStorage.setItem('user-data', JSON.stringify(response.data));
-                        navigate('/')
-                        window.location.reload();
+                        if(response.data.googleid){
+                            navigate('/')
+                            window.location.reload();
+                        }
+                        else{
+                            navigate('/login')
+                            window.location.reload();
+                        }
+                            
                     }
                    
                 }

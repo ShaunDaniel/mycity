@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import { Box, Stack, FormControl, FormLabel, FormErrorMessage,Input, Spinner, Button, Text, Heading } from '@chakra-ui/react';
 import userService from '../services/userService';
 
@@ -19,11 +19,10 @@ function Login() {
   }
 
   useEffect(() => {
-    const data = sessionStorage.getItem('user-data');
-    if (data) {
+    if (sessionStorage.getItem('user-data')) {
       navigate('/');
     }
-  }, [navigate]);
+  }, []);
 
   const handleSubmit = (event) => {
     setIsLoading(true);
@@ -46,14 +45,14 @@ function Login() {
       else{
         setGoogleAccountError(false);
         userService.login(credentials, { withCredentials: true }).then((res) => {
-          if (res.status === 200) {
+
+          if (res.status !== 401 && res.status !== 500) {
             navigate('/');
             window.location.reload();
-            sessionStorage.setItem('data', JSON.stringify(res.data));
+            sessionStorage.setItem('user-data', JSON.stringify(res.data));
             setIsLoading(false);
             setIsFormError(false);
-    
-          } else if(res.status) {
+          } else{
             setIsLoading(false);
             setIsFormError(true);
           }
@@ -92,7 +91,7 @@ function Login() {
           {isLoading ? <Spinner /> : 'Sign in'}
         </Button>
         <Text textAlign="center">Or sign in with</Text>
-        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `https://mycity-backend.onrender.com/login/federated/google` }}>
+        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `${process.env.REACT_APP_API_URL}/login/federated/google` }}>
           Sign in with Google
         </Button>
         <Text textAlign="center">New user? <a href="/register/1">Register here</a></Text>
