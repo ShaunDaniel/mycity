@@ -81,11 +81,10 @@ router.get("/login", function (req, res, next) {
 });
 router.get("/login/federated/google", passport.authenticate("google"));
 router.get('/oauth2/redirect/google', passport.authenticate('google', {
-  failureRedirect: 'http://localhost:3000/login'
+  failureRedirect: process.env.FRONTEND_URL+'/login'
 }), (req, res) => {
-  // Set a session variable to indicate login via Google
-  req.session.loginMethod = 'Google';
-  res.redirect('http://localhost:3000/');
+   
+  res.redirect(process.env.FRONTEND_URL);
 }  
 );
 

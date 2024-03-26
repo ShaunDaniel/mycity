@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function Register() {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [user, setUser] = React.useState({
     firstName: '',
     lastName: '',
@@ -60,6 +61,7 @@ function Register() {
 
 
   const formSubmitHandler = (e) => {
+    setIsLoading(true);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!user.firstName || !user.lastName || !user.email || !user.password) {
@@ -84,12 +86,13 @@ function Register() {
         if(res.data.exists){
           console.log("email exists")
           setEmailError('Email already exists');
+          setIsLoading(false);
           return;
         }
         else{
           navigate('/register/2', { state: { user } }); // navigate to FinishRegister and pass the user state
           setEmailError(false);
-
+          setIsLoading(false);
         }
       })
     }

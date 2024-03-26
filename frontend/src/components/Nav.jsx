@@ -51,7 +51,7 @@ function Nav() {
             }
             setUserData(JSON.parse(sessionStorage.getItem('data')));
         }
-    },[user_data,location.pathname]);
+    },[]);
 
     console.log(user_data)
 

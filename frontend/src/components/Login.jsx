@@ -4,14 +4,12 @@ import { Box, Stack, FormControl, FormLabel, FormErrorMessage,Input, Spinner, Bu
 import userService from '../services/userService';
 
 function Login() {
-
   const [isLoading, setIsLoading] = useState(false);
   const [isFormError, setIsFormError] = useState(false);
   const [googleAccountError, setGoogleAccountError] = useState(false);
   const [formIsEmpty, setFormIsEmpty] = useState(false);
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const navigate = useNavigate();
-
   const handleChange = (event) => {
     const { id, value } = event.target;
     setCredentials((prevCredentials) => ({
@@ -55,7 +53,7 @@ function Login() {
             setIsLoading(false);
             setIsFormError(false);
     
-          } else {
+          } else if(res.status) {
             setIsLoading(false);
             setIsFormError(true);
           }
@@ -94,7 +92,7 @@ function Login() {
           {isLoading ? <Spinner /> : 'Sign in'}
         </Button>
         <Text textAlign="center">Or sign in with</Text>
-        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = 'https://mycity-backend.onrender.com/login/federated/google' }}>
+        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `${process.env.REACT_APP_API_URL}/login/federated/google` }}>
           Sign in with Google
         </Button>
         <Text textAlign="center">New user? <a href="/register/1">Register here</a></Text>

@@ -19,7 +19,7 @@ const authRouter = require('./routes/auth');
 
 const app = express();
 app.set('trust proxy', 1);
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 // Enable rate limiting
 const limiter = rateLimit({
