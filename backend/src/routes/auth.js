@@ -17,7 +17,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/oauth2/redirect/google",
+      callbackURL: "/api/oauth2/redirect/google",
       scope: ["profile", "email"],
     },
     function verify(issuer, profile, done) {
@@ -80,7 +80,7 @@ router.get("/login", function (req, res, next) {
   res.send("login");
 });
 router.get("/login/federated/google", passport.authenticate("google"));
-router.get('/oauth2/redirect/google', passport.authenticate('google', {
+router.get('/api/oauth2/redirect/google', passport.authenticate('google', {
   failureRedirect: process.env.FRONTEND_URL+'/login'
 }), (req, res) => {
    
