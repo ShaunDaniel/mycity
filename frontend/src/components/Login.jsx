@@ -92,7 +92,7 @@ function Login() {
           {isLoading ? <Spinner /> : 'Sign in'}
         </Button>
         <Text textAlign="center">Or sign in with</Text>
-        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `https://mycity-backend.onrender.com/api/login/federated/google` }}>
+        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `/login/federated/google` }}>
           Sign in with Google
         </Button>
         <Text textAlign="center">New user? <a href="/register/1">Register here</a></Text>
