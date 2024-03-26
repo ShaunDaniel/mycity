@@ -12,7 +12,7 @@ function Homepage() {
         try {
             const data = await userService.user_details();
             if(data.status !== 404){
-                sessionStorage.setItem('data',JSON.stringify(data.data));
+                sessionStorage.setItem('user-data',JSON.stringify(data.data));
             }
         } catch(err) {
             console.error(err);
@@ -22,8 +22,8 @@ function Homepage() {
 
   useEffect(() => {
     userDataLoad().then(() => {
-      const user_data = JSON.parse(sessionStorage.getItem('data'));
-      if (user_data.city==='-'|| user_data.state==='-'|| user_data.city===undefined|| user_data.state===undefined) {
+      const user_data = JSON.parse(sessionStorage.getItem('user-data'));
+      if (user_data.city==='-'|| user_data.state==='-') {
         navigate('/register/2');
       }
       else{

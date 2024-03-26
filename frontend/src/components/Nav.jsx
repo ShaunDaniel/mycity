@@ -14,7 +14,7 @@ function Nav() {
 
     useEffect(() => {
         const userDataLoad = async () => {
-            if(sessionStorage.getItem('data') === null){
+            if(sessionStorage.getItem('user-data') === null){
                 try {
                     const data = await userService.user_details();
                     if(data.status !== 404){
@@ -32,13 +32,13 @@ function Nav() {
                 }
             }
             else{
-                setUserData(JSON.parse(sessionStorage.getItem('data')));
+                setUserData(JSON.parse(sessionStorage.getItem('user-data')));
                 console.log(user_data)
             }
         }
         if (location.pathname === '/register/2' || location.pathname === '/register/1' || location.pathname === '/login'){
         } else {
-            if (sessionStorage.getItem('data') === null) {
+            if (sessionStorage.getItem('user-data') === null) {
                 try {
                     userDataLoad().then((data) => {
                         setUserData(data);
@@ -49,7 +49,7 @@ function Nav() {
                     setUserData({city:'-'})
                 }
             }
-            setUserData(JSON.parse(sessionStorage.getItem('data')));
+            setUserData(JSON.parse(sessionStorage.getItem('user-data')));
         }
     },[]);
 

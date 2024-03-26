@@ -22,7 +22,7 @@ function FinishRegister(props) {
 
     useEffect(() => {
 
-        const user_data = JSON.parse(sessionStorage.getItem('data'));
+        const user_data = JSON.parse(sessionStorage.getItem('user-data'));
 
         if(userFromRegister.user){
             setUser(userFromRegister.user)
@@ -76,7 +76,7 @@ function FinishRegister(props) {
                 (response) => {
                     console.log(response)
                     if(response.status===201 || response.status===200){
-                        sessionStorage.setItem('data', JSON.stringify(response.data));
+                        sessionStorage.setItem('user-data', JSON.stringify(response.data));
                         navigate('/')
                         window.location.reload();
                     }
