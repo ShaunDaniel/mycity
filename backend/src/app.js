@@ -1,8 +1,7 @@
 const express = require("express");
 const path = require('path');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const MongoStore = require('connect-mongo');
-const SQLiteStore = require('connect-sqlite3')(session);
 const logger = require('morgan');
 const passport = require('passport');
 const cors = require('cors');
@@ -10,6 +9,7 @@ const helmet = require('helmet');
 const User = require('./models/user');
 const rateLimit = require("express-rate-limit");
 const dotenv = require('dotenv').config();
+const cookieParser = require('cookie-parser');
 
 // Routers
 const userRouter = require("./routes/userRoutes");
@@ -17,6 +17,7 @@ const issueRouter = require("./routes/issueRoutes");
 const authRouter = require('./routes/auth');
 
 const app = express();
+app.use(cookieParser());
 app.set('trust proxy', 1);
 const port = process.env.PORT || 3001;
 
@@ -67,7 +68,7 @@ app.use(cors({
     credentials: true
   }));
 
-app.use(session({
+app.use(cookieSession({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
