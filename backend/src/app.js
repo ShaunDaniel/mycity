@@ -44,18 +44,19 @@ app.use(helmet.contentSecurityPolicy({
     }
 }));
 const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app'];
-app.options('*', cors());
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+    } else {
+        next();
+    }
+});
 app.use(cors({
-    origin: function(origin, callback){
-      // allow requests with no origin (like mobile apps or curl requests)
-      if(!origin) return callback(null, true);
-      if(allowedOrigins.indexOf(origin) === -1){
-        var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true
+    origin: allowedOrigins, // or you can use req.headers.origin if you want to dynamically set the origin
+    methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
+    allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
+    credentials: true,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 
 app.use(logger('dev')); 
