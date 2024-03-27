@@ -50,7 +50,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false })); 
 app.use(express.static(path.join(__dirname, 'public'))); 
 
-const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app'];
+const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app', 'https://mycity-backend.onrender.com'];
 app.use((req, res, next) => {
     if (req.method === 'OPTIONS') {
         res.status(200).end();
@@ -59,7 +59,7 @@ app.use((req, res, next) => {
     }
 });
 app.use(cors({
-    origin: allowedOrigins, // or you can use req.headers.origin if you want to dynamically set the origin
+    origin:allowedOrigins,
     methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
     allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
     credentials: true,
