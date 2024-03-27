@@ -43,6 +43,13 @@ app.use(helmet.contentSecurityPolicy({
         upgradeInsecureRequests: [],
     }
 }));
+
+
+app.use(logger('dev')); 
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: false })); 
+app.use(express.static(path.join(__dirname, 'public'))); 
+
 const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app'];
 app.use((req, res, next) => {
     if (req.method === 'OPTIONS') {
@@ -58,15 +65,6 @@ app.use(cors({
     credentials: true,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
-
-app.use(logger('dev')); 
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: false })); 
-app.use(express.static(path.join(__dirname, 'public'))); 
-app.use(cors({
-    origin: ['https://mycity-omega.vercel.app','http://localhost:3000/'],
-    credentials: true
-  }));
 
 app.use(cookieSession({
     secret: process.env.SESSION_SECRET,
