@@ -43,7 +43,7 @@ app.use(helmet.contentSecurityPolicy({
         upgradeInsecureRequests: [],
     }
 }));
-const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app'];
+const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app','https://mycity-frontend.netlify.app'];
 app.options('*', cors());
 app.use(cors({
     origin: function(origin, callback){
