@@ -4,11 +4,12 @@ import Logout from './Logout.jsx'
 import { useEffect, useState,useContext} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserContext from './UserContext.jsx';
+import userService from '../services/userService.js';
 
 function Nav() {
     const user = useContext(UserContext);
     const navigate = useNavigate();
-
+    userService.user_details().then((res)=>{console.log(res)}).catch((err)=>{console.log(err)})
     
     return (
         <Box bgColor={'#222831'} h={"10vh"}>

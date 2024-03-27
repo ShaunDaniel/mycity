@@ -16,9 +16,10 @@
     "mongoose": "^8.2.1",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
-    "passport": "^0.7.0",
+    "passport": "^0.5.3",
     "passport-google-oidc": "^0.1.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "vercel": "^33.6.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

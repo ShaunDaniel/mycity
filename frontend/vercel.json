@@ -1,5 +1,7 @@
 {
-    "rewrites":  [
-      {"source": "/(.*)", "destination": "https://mycity-backend.onrender.com/"}
-    ]
+  "rewrites":  [
+    {"source": "/(.*)",
+    "destination": "https://mycity-backend.onrender.com/"
   }
+  ]
+}

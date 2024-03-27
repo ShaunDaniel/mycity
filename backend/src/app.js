@@ -27,8 +27,6 @@ const limiter = rateLimit({
     max: 100 // limit each IP to 100 requests per windowMs
 });
 
-
-
 // Middleware
 app.use("/", limiter); // Apply rate limiting middleware
 app.use(helmet()); // Apply helmet middleware for security headers
@@ -46,7 +44,7 @@ app.use(helmet.contentSecurityPolicy({
     }
 }));
 const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app'];
-
+app.options('*', cors());
 app.use(cors({
     origin: function(origin, callback){
       // allow requests with no origin (like mobile apps or curl requests)
@@ -59,6 +57,7 @@ app.use(cors({
     },
     credentials: true
 }));
+
 app.use(logger('dev')); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
@@ -73,7 +72,7 @@ app.use(cookieSession({
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
-    cookie: { secure: process.env.NODE_ENV === 'production' }
+    cookie: { secure: true }
 }));
 app.use(passport.initialize()); 
 app.use(passport.session());

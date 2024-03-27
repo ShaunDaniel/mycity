@@ -1,44 +1,54 @@
 import axios from 'axios';
-const API_URL = process.env.REACT_APP_API_URL + '/api/users';
+const API_URL = process.env.REACT_APP_API_URL + 'api/users';
+
+const api = axios.create({
+  baseURL: `${process.env.REACT_APP_SERVER_URL}`,
+  withCredentials: true,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
+
 
 function register(user) {
-  return axios.post(`${API_URL}/register`, user);
+  return api.post(`${API_URL}/register`, user);
 }
 
 function isGoogleAccount(email) {
-  return axios.get(`${API_URL}/google-account/${email}`);
+  return api.get(`${API_URL}/google-account/${email}`);
 
 }
 
 function login(credentials) {
-  return axios.post(`${API_URL}/login`,{username:credentials.email,password:credentials.password});
+  return api.post(`${API_URL}/login`,{username:credentials.email,password:credentials.password});
 }
 
 function logout() {
-  return axios.get(`${API_URL}/logout`,{withCredentials:true});
+  return api.get(`${API_URL}/logout`,{withCredentials:true});
 }
 
 function user_details() {
-  return axios.get(`${API_URL}/user-details`,{withCredentials:true});
+  return api.get(`${API_URL}/user-details`,{withCredentials:true});
 }
 
 
 function userExists(email) {
-  return axios.get(`${API_URL}/email-exists/${email}`);
+  return api.get(`${API_URL}/email-exists/${email}`);
 }
 
 
 function updateUser(id, user) {
-  return axios.put(`${API_URL}/${id}`, user);
+  return api.put(`${API_URL}/${id}`, user);
 }
 
 
 function deleteUser(id) {
-  return axios.delete(`${API_URL}/${id}`);
+  return api.delete(`${API_URL}/${id}`);
 }
 
 function  fetchCities(){
-  return axios.get(`${API_URL}/cities`);
+  return api.get(`${API_URL}/cities`);
 }
 
 const userService = {
