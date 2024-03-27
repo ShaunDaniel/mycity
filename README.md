@@ -2,7 +2,6 @@
 
 MyCityApp is a web application that empowers citizens to report civic issues in their local communities and facilitates efficient communication between citizens and government authorities for timely resolution.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ca731f61-765c-4dd0-9670-71fd9ff7251f/deploy-status)](https://app.netlify.com/sites/mycity-frontend/deploys)
 ## Features
 
 - **Citizen Reporting**
