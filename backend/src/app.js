@@ -19,6 +19,22 @@ const authRouter = require('./routes/auth');
 const app = express();
 app.use(cookieParser());
 app.set('trust proxy', 1);
+const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app', 'https://mycity-backend.onrender.com'];
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+    } else {
+        next();
+    }
+});
+app.use(cors({
+    origin:allowedOrigins,
+    methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
+    allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
+    credentials: true,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}));
+
 const port = process.env.PORT || 3001;
 
 // Enable rate limiting
@@ -50,21 +66,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false })); 
 app.use(express.static(path.join(__dirname, 'public'))); 
 
-const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app', 'https://mycity-backend.onrender.com'];
-app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-    } else {
-        next();
-    }
-});
-app.use(cors({
-    origin:allowedOrigins,
-    methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
-    allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
-    credentials: true,
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}));
 
 app.use(cookieSession({
     secret: process.env.SESSION_SECRET,
