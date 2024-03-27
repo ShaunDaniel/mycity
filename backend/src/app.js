@@ -94,7 +94,7 @@ passport.deserializeUser(async function(id, cb) {
 // Routes
 app.use("/api/users",userRouter);
 app.use("/issues", issueRouter);
-app.use("/api/", authRouter);
+app.use("/api", authRouter);
 
 
 // Start the server
