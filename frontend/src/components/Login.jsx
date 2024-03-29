@@ -1,7 +1,8 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useContext } from 'react'
 import { useNavigate} from 'react-router-dom';
 import { Box, Stack, FormControl, FormLabel, FormErrorMessage,Input, Spinner, Button, Text, Heading } from '@chakra-ui/react';
 import userService from '../services/userService';
+import UserContext from './UserContext';
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -9,7 +10,10 @@ function Login() {
   const [googleAccountError, setGoogleAccountError] = useState(false);
   const [formIsEmpty, setFormIsEmpty] = useState(false);
   const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const { user, setUser } = useContext(UserContext);
+
   const navigate = useNavigate();
+
   const handleChange = (event) => {
     const { id, value } = event.target;
     setCredentials((prevCredentials) => ({
@@ -19,7 +23,7 @@ function Login() {
   }
 
   useEffect(() => {
-    if (sessionStorage.getItem('user-data')) {
+    if (user) {
       navigate('/');
     }
   }, []);
@@ -49,7 +53,7 @@ function Login() {
           if (res.status !== 401 && res.status !== 500) {
             navigate('/');
             window.location.reload();
-            sessionStorage.setItem('user-data', JSON.stringify(res.data));
+            document.cookie = `jwtToken=${res.data.token}; path=/;`; // set JWT token to a cookie
             setIsLoading(false);
             setIsFormError(false);
           } else{
@@ -87,11 +91,20 @@ function Login() {
           <FormLabel>Password</FormLabel>
           <Input id="password" type="password" placeholder="Enter your password" onChange={handleChange} />
         </FormControl>
-        <Button colorScheme="blue" size="lg" onClick={handleSubmit}>
-          {isLoading ? <Spinner /> : 'Sign in'}
+        <Button
+        colorScheme="blue"
+        fontSize={{ base: "xx-large", lg: "md" }}
+        py={{ base: "2rem", lg: "1rem" }}
+        type="submit"
+        width="full"
+        onClick={handleSubmit}
+        isLoading={isLoading}
+        loadingText="Logging in"
+        >
+            Login
         </Button>
         <Text textAlign="center">Or sign in with</Text>
-        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `${process.env.REACT_APP_API_URL}login/federated/google` }}>
+        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `${process.env.REACT_APP_API_URL}v1/auth/google` }}>
           Sign in with Google
         </Button>
         <Text textAlign="center">New user? <a href="/register/1">Register here</a></Text>

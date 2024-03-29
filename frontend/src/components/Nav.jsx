@@ -7,7 +7,7 @@ import UserContext from './UserContext.jsx';
 import userService from '../services/userService.js';
 
 function Nav() {
-    const user = useContext(UserContext);
+    const {user,setUser} = useContext(UserContext);
     const navigate = useNavigate();
     userService.user_details().then((res)=>{console.log(res)}).catch((err)=>{console.log(err)})
     

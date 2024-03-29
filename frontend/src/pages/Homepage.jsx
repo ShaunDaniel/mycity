@@ -9,7 +9,7 @@ import userService from '../services/userService';
 function Homepage() {
   
   const navigate = useNavigate()
-  const user = useContext(UserContext);
+  const {user,setUser} = useContext(UserContext);
 
   useEffect(() => {
     if (user && user.city === '-') {

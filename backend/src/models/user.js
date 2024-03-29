@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String},
     city: { type: String, required: true },
-    state: { type: String, required: true },
-    googleid: { type: String, required: false },
+    state_name: { type: String, required: true },
+    googleId: { type: String, required: false },
   });
 
   userSchema.pre('save', function(next) {
