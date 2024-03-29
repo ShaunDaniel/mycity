@@ -29,6 +29,7 @@ MyCityApp is a web application that empowers citizens to report civic issues in 
 
 ## Screenshots
 ![Screenshot1](./screenshots/image.png)
+![image](https://github.com/ShaunDaniel/mycity/assets/73394707/9ccd9a28-576f-45d3-bc8e-f49e5eb459d9)
 
 ## Getting Started
 
