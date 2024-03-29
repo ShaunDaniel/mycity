@@ -17,23 +17,18 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-      if(sessionStorage.getItem('user-data')){
-        setUser(JSON.parse(sessionStorage.getItem('user-data')));
-      }
-      else{
         userService.user_details()
         .then((res) => {
-          setUser(res.data);
+          setUser(res.data.user);
         })
         .catch(() => {
           setUser(null);
         });
-      }
     }, []);
 
 
   return (
-    <UserContext.Provider value={user}>
+    <UserContext.Provider value={{ user, setUser }}>
     <ChakraProvider theme={theme}>
         <Navbar/>
         <Routes>

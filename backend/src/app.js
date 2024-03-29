@@ -1,40 +1,44 @@
 const express = require("express");
 const path = require('path');
-const cookieSession = require('cookie-session');
-const MongoStore = require('connect-mongo');
 const logger = require('morgan');
-const passport = require('passport');
 const cors = require('cors');
 const helmet = require('helmet');
 const User = require('./models/user');
 const rateLimit = require("express-rate-limit");
 const dotenv = require('dotenv').config();
+const session = require('express-session');
+const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-
+const passport = require('passport');
+const useGoogleStrategy = require('./config/passport.config.js');
+const useLocalStrategy = require('./config/passport.config.js');
 // Routers
 const userRouter = require("./routes/userRoutes");
 const issueRouter = require("./routes/issueRoutes");
 const authRouter = require('./routes/auth');
-
+ 
 const app = express();
-app.use(cookieParser());
 app.set('trust proxy', 1);
-const allowedOrigins = ['http://localhost:3000', 'https://mycity-omega.vercel.app', 'https://mycity-backend.onrender.com'];
-app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-    } else {
-        next();
-    }
-});
-app.use(cors({
-    origin:allowedOrigins,
-    methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
-    allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
-    credentials: true,
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}));
+mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
+    console.log("Connected to MongoDB");
+}).catch((error) => {console.log(error)});
 
+
+app.use(cookieParser());
+const allowedOrigins = ['http://localhost:3000'];
+
+app.use(cors({
+    origin: function(origin, callback){
+        if(!origin) return callback(null, true);
+        if(allowedOrigins.indexOf(origin) === -1){
+            var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true
+}));
 const port = process.env.PORT || 3001;
 
 // Enable rate limiting
@@ -66,35 +70,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false })); 
 app.use(express.static(path.join(__dirname, 'public'))); 
 
-
-app.use(cookieSession({
+app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
-    cookie: { secure: true }
 }));
-app.use(passport.initialize()); 
+
+// Passport config
+useGoogleStrategy();
+app.use(passport.initialize());
 app.use(passport.session());
 
-// Passport serialization and deserialization
-passport.serializeUser(async function(user, cb) {
-    cb(null, user._id.toString())
-});
-
-passport.deserializeUser(async function(id, cb) {
-    try {
-        const user = await User.findById(id);
-        cb(null, user);
-    } catch (err) {
-        cb(err);
-    }
-});
 
 // Routes
 app.use("/api/users",userRouter);
 app.use("/issues", issueRouter);
-app.use("/", authRouter);
+app.use('/v1/auth', authRouter)
+
 
 
 // Start the server

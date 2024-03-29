@@ -13,7 +13,7 @@ function Register() {
     email: '',
     password: '',
     city: '-',
-    state:'-'
+    state_name:'-'
   });
   const navigate = useNavigate();
 
@@ -66,15 +66,18 @@ function Register() {
 
     if (!user.firstName || !user.lastName || !user.email || !user.password) {
       alert('Please fill all the fields');
+      setIsLoading(false);
       return;
     }
 
     if (firstNameError || lastNameError || emailError || passwordError) {
       alert('Please correct the errors before submitting');
+      setIsLoading(false);
       return;
     }
     if (!emailRegex.test(user.email)) {
       setEmailError('Please enter a valid email address');
+      setIsLoading(false);
       return
     }
 
@@ -173,10 +176,19 @@ function Register() {
         <Text cursor={'pointer'} onClick={()=>{navigate('/login')}} mb={5}>Already have an account?</Text>
         
 
-        <Button colorScheme="blue" fontSize={{ base: 'xx-large', lg: 'md' }} py={{ base: '2rem', lg: '1rem' }} type="submit" width="full" onClick={formSubmitHandler}>
-          Next
+        <Button
+        colorScheme="blue"
+        fontSize={{ base: "xx-large", lg: "md" }}
+        py={{ base: "2rem", lg: "1rem" }}
+        type="submit"
+        width="full"
+        onClick={formSubmitHandler}
+        isLoading={isLoading}
+        loadingText="Moving on..."
+        >
+            Register
         </Button>
-      </Box>
+          </Box>
     </div>
   );
 }
