@@ -25,7 +25,7 @@ mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTop
 
 
 app.use(cookieParser());
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:3000',"https://mycity-omega.vercel.app"];
 
 app.use(cors({
     origin: function(origin, callback){
