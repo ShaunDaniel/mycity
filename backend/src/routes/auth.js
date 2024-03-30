@@ -14,14 +14,7 @@ authRouter.get('/google/callback',passport.authenticate('google', { failureRedir
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
-    res.cookie('jwtToken', token, {
-      domain: process.env.FRONTEND_URL,
-      secure: true,
-      sameSite: 'none',
-      httpOnly: true,
-      path: '/'
-    });
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
   }
 );
 

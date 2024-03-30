@@ -6,13 +6,13 @@ const passport = require("passport");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const jwtAuth = require("../middlewares/jwtAuth");
 
-router.get("/user-details", jwtAuth, (req, res) => {
+router.post("/user-details", (req, res) => {
   console.log("Inside user-details");
-  if (req.user) {
-    console.log(req.user);
-    res.json(req.user);
+  console.log(req.body);  
+  if(req.body.jwtToken){
+    const decoded = jwt.verify(req.body.jwtToken, process.env.JWT_SECRET || '');
+    res.json(decoded);
   } else {
     res.status(404).json({ message: "User not found" });
   }

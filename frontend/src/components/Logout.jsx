@@ -9,9 +9,8 @@ function Logout() {
 
 
     const handleLogout = () => {
-        // Clear the JWT token from the cookie
-        document.cookie = 'jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        // Navigate to the home page and reload
+        // Clear the JWT token from the local storage
+        localStorage.removeItem('jwtToken');
         navigate('/');
         window.location.reload();
     };

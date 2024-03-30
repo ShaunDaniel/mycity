@@ -8,7 +8,6 @@ const rateLimit = require("express-rate-limit");
 const dotenv = require('dotenv').config();
 const session = require('express-session');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const useGoogleStrategy = require('./config/passport.config.js');
 const useLocalStrategy = require('./config/passport.config.js');
@@ -24,7 +23,6 @@ mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTop
 }).catch((error) => {console.log(error)});
 
 
-app.use(cookieParser());
 const allowedOrigins = ['http://localhost:3000',"https://mycity-omega.vercel.app"];
 
 app.use(cors({

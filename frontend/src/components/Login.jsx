@@ -53,7 +53,7 @@ function Login() {
           if (res.status !== 401 && res.status !== 500) {
             navigate('/');
             window.location.reload();
-            document.cookie = `jwtToken=${res.data.token}; path=/;`; // set JWT token to a cookie
+            localStorage.setItem('jwtToken', res.data.token); // set JWT token to local storage
             setIsLoading(false);
             setIsFormError(false);
           } else{

@@ -19,7 +19,7 @@ function FinishRegister(props) {
     const [registerUser, setRegisterUser] = useState({});
     const location = useLocation();
 
-    const [userFromRegister, setUserFromRegister] = useState(location.state ? location.state.user : {});
+    const [userFromRegister, setUserFromRegister] = useState(location.state ? location.state.user : null);
 
 
     useEffect(() => {
@@ -28,14 +28,12 @@ function FinishRegister(props) {
         }).catch((err) => {
             console.log(err);
         })
-        if (!registerUser.firstName && !registerUser.lastName && !registerUser.email && !registerUser.password) {
-            
+
             if (userFromRegister) {
                 setRegisterUser(userFromRegister);
             } else if (user) {
                 setRegisterUser(user);
             }
-        }
     }, [user]);
 
 

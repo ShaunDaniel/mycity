@@ -1,7 +1,7 @@
 import "./App.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route} from 'react-router-dom';
 import Login from "./components/Login";
 import Navbar from "./components/Nav";
 import Register from "./pages/Register";
@@ -14,17 +14,23 @@ import UserContext from './components/UserContext';
 
 function App() {
 
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-        userService.user_details()
+    const jwtToken = localStorage.getItem("jwtToken");
+    if (jwtToken) {
+        userService.user_details(jwtToken)
         .then((res) => {
           setUser(res.data.user);
         })
         .catch(() => {
           setUser(null);
         });
-    }, []);
+   
+  } else {
+    setUser(null);
+  } }, []);
 
 
   return (
