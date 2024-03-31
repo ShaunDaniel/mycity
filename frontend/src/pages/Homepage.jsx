@@ -3,35 +3,36 @@ import HomepageFeatureTab from '../components/HomepageFeatureTab'
 import { useNavigate } from 'react-router-dom';
 import { useEffect,useContext } from 'react';
 import UserContext from '../components/UserContext';
+import userService from '../services/userService';
 
 
 function Homepage() {
   
   const navigate = useNavigate()
+  // eslint-disable-next-line 
   const {user,setUser} = useContext(UserContext);
 
   useEffect(() => {
-
-  const urlParams = new URLSearchParams(window.location.search);
-
-  if (urlParams.has('token')) {
-    const token = urlParams.get('token');
-    localStorage.setItem('jwtToken', token);
-    navigate('/')
-  }
-  else {
-    if (user && user.city === '-') {
-      navigate('/register/2');
-    } else {
-      return;
+    const urlParams = new URLSearchParams(window.location.search);
+    if(user!==null){
+      if(user && user.city==='-'){
+        navigate('/register/2')
+      }
     }
-  }
-}, [user]);
+    else{
+      if (urlParams.has('token')) {
+        const token = urlParams.get('token');
+        localStorage.setItem('jwtToken', `Bearer ${token}`);
+        navigate(window.location.pathname, { replace: true });
+        window.location.reload();
+      } else {
+        return;
+      }
+  
+    }
+  }, [user]);
 
 
-  const handleGetStarted = () => {
-    navigate('/login');
-  };
 
   return (
     <Flex direction={'column'} height={'90vh'} overflow={'auto'}>
@@ -45,7 +46,7 @@ function Homepage() {
           <Text fontSize={{ base: '3rem', sm: '2rem', lg: '1rem' }} fontWeight={300}>
             Report civic issues, track progress, & collaborate with authorities to improve your city.
           </Text>
-          <Button w={'fit-content'} fontSize={{ base: '2rem', lg: '1rem' }} onClick={handleGetStarted}>Get Started</Button>
+          <Button w={'fit-content'} fontSize={{ base: '2rem', lg: '1rem' }} onClick={()=>{navigate('/login')}}>Get Started</Button>
         </Flex>
 
         <Flex w={'fit-content'} justifyContent={'end'}>

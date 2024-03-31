@@ -9,8 +9,9 @@ function Logout() {
 
 
     const handleLogout = () => {
-        // Clear the JWT token from the local storage
+
         localStorage.removeItem('jwtToken');
+
         navigate('/');
         window.location.reload();
     };

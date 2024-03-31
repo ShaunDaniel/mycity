@@ -53,8 +53,9 @@ function Login() {
           if (res.status !== 401 && res.status !== 500) {
             navigate('/');
             window.location.reload();
-            localStorage.setItem('jwtToken', res.data.token); // set JWT token to local storage
-            setIsLoading(false);
+
+            localStorage.setItem('jwtToken', `${res.data.jwtToken}`);
+
             setIsFormError(false);
           } else{
             setIsLoading(false);

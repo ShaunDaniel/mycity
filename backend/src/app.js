@@ -10,7 +10,6 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const useGoogleStrategy = require('./config/passport.config.js');
-const useLocalStrategy = require('./config/passport.config.js');
 // Routers
 const userRouter = require("./routes/userRoutes");
 const issueRouter = require("./routes/issueRoutes");
@@ -29,6 +28,7 @@ app.use(cors({
     origin: function(origin, callback){
         if(!origin) return callback(null, true);
         if(allowedOrigins.indexOf(origin) === -1){
+            console.log(origin);
             var msg = 'The CORS policy for this site does not ' +
                 'allow access from the specified Origin.';
             return callback(new Error(msg), false);

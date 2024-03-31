@@ -14,12 +14,13 @@ import UserContext from './components/UserContext';
 
 function App() {
 
+  const [user, setUser] = useState();
 
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const jwtToken = localStorage.getItem("jwtToken");
     if (jwtToken) {
+      console.log("Inside user_details",jwtToken);
         userService.user_details(jwtToken)
         .then((res) => {
           setUser(res.data.user);
@@ -35,7 +36,7 @@ function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-    <ChakraProvider theme={theme}>
+      <ChakraProvider theme={theme}>
         <Navbar/>
         <Routes>
           <Route path="/" element={<Homepage/>} />
@@ -44,10 +45,9 @@ function App() {
           <Route path="/register/2" element={<FinishRegister/>} />
         </Routes>
         <Footer/>
-    </ChakraProvider>
+      </ChakraProvider>
     </UserContext.Provider>
   );
 }
-
 
 export default App;

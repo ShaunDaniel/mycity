@@ -7,17 +7,24 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-router.post("/user-details", (req, res) => {
+router.get("/user-details", (req, res) => {
   console.log("Inside user-details");
-  console.log(req.body);  
-  if(req.body.jwtToken){
-    const decoded = jwt.verify(req.body.jwtToken, process.env.JWT_SECRET || '');
-    res.json(decoded);
+  const authHeader = req.headers['authorization'];
+  console.log(authHeader)
+  if (authHeader) {
+    const token = authHeader.split(' ')[1]; // Bearer <token>
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        res.status(401).json({ message: "Invalid token" });
+      } else {
+        console.log(decoded);
+        res.json(decoded);
+      }
+    });
   } else {
-    res.status(404).json({ message: "User not found" });
+    res.status(401).json({ message: "Token not found" });
   }
 });
-
 router.get("/email-exists/:email", (req, res) => {
   const { email } = req.params;
   User.findOne({ email })
@@ -55,13 +62,10 @@ router.post("/login", async (req, res) => {
                 googleId: user.googleId,                
             },
           };
-          jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: 3600 }, // token expires in 1 hour
+          jwt.sign(payload,process.env.JWT_SECRET,{ expiresIn: 3600 }, 
             (err, token) => {
               if (err) throw err;
-              res.json({ token });
+              res.status(200).json({jwtToken: `Bearer ${token}`});
             }
           );
 
@@ -78,26 +82,60 @@ router.post("/login", async (req, res) => {
 // Register route
 router.post("/register", (req, res) => {
   console.log("Inside register");
-
+  console.log(req.body);
   User.findOne({ email: req.body.email }).then((user) => {
-    console.log("Checking user",user)
     if (user) {
-      User.updateOne({ email: req.body.email,city: req.body.city,state_name:req.body.state_name }, { $set: req.body })
-        .then((user) => {
-          console.log("User updated successfully");
-          console.log(user)
-          res.status(201).send(req.body);
-        })
-        .catch((err) => {
+      if(user.googleId){
+        User.updateOne({ email: req.body.email }, req.body).then((user) => {
+          const token = jwt.sign(
+            { user: req.body },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" },
+          );
+          res.status(201).json({jwtToken: `Bearer ${token}`});
+        }
+        ).catch((err) => {
           res.status(400).json(err);
         });
-      return;
+      }
+      else{
+        res.status(400).json({ message: "User already exists" });
+      }
     } else {
       const user = new User(req.body);
       user
         .save()
         .then((user) => {
-          res.status(201).send(user);
+          console.log("Google User Registered for the first time",user)
+          const token = jwt.sign(
+            { user: user },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" },
+          );
+          res.status(201).json({jwtToken: `Bearer ${token}`});function authenticateToken(req, res, next) {
+  // Get auth header value
+  const bearerHeader = req.headers['authorization'];
+  // Check if bearer is undefined
+  if(typeof bearerHeader !== 'undefined') {
+    // Split at the space
+    const bearer = bearerHeader.split(' ');
+    // Get token from array
+    const bearerToken = bearer[1];
+    // Verify the token
+    jwt.verify(bearerToken, process.env.JWT_SECRET, (err, authData) => {
+      if(err) {
+        res.sendStatus(403);
+      } else {
+        // If verification is successful, attach the user data to the request
+        req.user = authData;
+        next();
+      }
+    });
+  } else {
+    // Forbidden
+    res.sendStatus(403);
+  }
+}
         })
         .catch((err) => {
           res.status(400).json(err);

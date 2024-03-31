@@ -1,8 +1,6 @@
 const express = require('express');
-const Router = require('express').Router;
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv').config();
 
 var authRouter = express.Router();
 
@@ -14,7 +12,7 @@ authRouter.get('/google/callback',passport.authenticate('google', { failureRedir
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
-    res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
+    res.redirect(`${process.env.FRONTEND_URL}/?token=${token}`);
   }
 );
 
