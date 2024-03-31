@@ -3,7 +3,6 @@ import HomepageFeatureTab from '../components/HomepageFeatureTab'
 import { useNavigate } from 'react-router-dom';
 import { useEffect,useContext } from 'react';
 import UserContext from '../components/UserContext';
-import userService from '../services/userService';
 
 
 function Homepage() {
@@ -13,6 +12,7 @@ function Homepage() {
   const {user,setUser} = useContext(UserContext);
 
   useEffect(() => {
+
     const urlParams = new URLSearchParams(window.location.search);
     if(user!==null){
       if(user && user.city==='-'){
@@ -31,6 +31,24 @@ function Homepage() {
   
     }
   }, [user]);
+
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if (urlParams.has('token')) {
+    const token = urlParams.get('token');
+    localStorage.setItem('jwtToken', token);
+    navigate('/')
+  }
+  else {
+    if (user && user.city === '-') {
+      navigate('/register/2');
+    } else {
+      return;
+    }
+  }
+}, [user]);
+
 
 
 

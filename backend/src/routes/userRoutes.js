@@ -7,7 +7,6 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-
 router.get("/user-details", (req, res) => {
   console.log("Inside user-details");
   const authHeader = req.headers['authorization'];

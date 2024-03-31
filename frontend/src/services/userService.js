@@ -29,11 +29,13 @@ function logout() {
 }
 
 function user_details(jwtToken) {
+
   return api.get(`${API_URL}/user-details`,{
     headers: {
       Authorization: `${jwtToken}`,
     },
   });
+
 }
 
 
