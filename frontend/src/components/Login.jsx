@@ -1,6 +1,6 @@
 import React, { useState,useEffect, useContext } from 'react'
 import { useNavigate} from 'react-router-dom';
-import { Box, Stack, FormControl, FormLabel, FormErrorMessage,Input, Spinner, Button, Text, Heading } from '@chakra-ui/react';
+import { Box, Stack, FormControl, FormLabel, FormErrorMessage,Input, Spinner, Button, Text, Heading, Link } from '@chakra-ui/react';
 import userService from '../services/userService';
 import UserContext from './UserContext';
 
@@ -108,7 +108,7 @@ function Login() {
         <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `${process.env.REACT_APP_API_URL}v1/auth/google` }}>
           Sign in with Google
         </Button>
-        <Text textAlign="center">New user? <a href="/register/1">Register here</a></Text>
+        <Text textAlign="center">New user? <strong style={{ cursor: 'pointer' }} onClick={() => { navigate('/register/1') }}>Register here</strong></Text>
       </Stack>
     </Box>
   )
