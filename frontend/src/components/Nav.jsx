@@ -1,15 +1,17 @@
 import { Box, Text, Flex } from '@chakra-ui/react'
 import React from 'react'
 import Logout from './Logout.jsx'
-import { useEffect, useState,useContext} from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect,useContext} from 'react'
+import { useNavigate } from 'react-router-dom';
 import UserContext from './UserContext.jsx';
 import userService from '../services/userService.js';
 
 function Nav() {
+
+    
     const {user,setUser} = useContext(UserContext);
     const navigate = useNavigate();
-    userService.user_details().then((res)=>{console.log(res)}).catch((err)=>{console.log(err)})
+
     
     return (
         <Box bgColor={'#222831'} h={"10vh"}>

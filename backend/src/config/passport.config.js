@@ -5,8 +5,7 @@ const User = require('../models/user');
 
 const GoogleStrategy = passportGoogle.Strategy;
 function useGoogleStrategy(){
-    passport.use(new GoogleStrategy
-        ({
+    passport.use(new GoogleStrategy({
             clientID: process.env.GOOGLE_CLIENT_ID || '',
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
             callbackURL: '/v1/auth/google/callback',
@@ -14,29 +13,21 @@ function useGoogleStrategy(){
         }, (accessToken, refreshToken, profile, done) => {
             try {
                 if (!profile._json.email) throw "User does not have email";
-                User.findOne({ email: profile._json.email }).then((user) => {
-                    
-                    if (user) {
-                        done(null, user);
+                User.findOne({ email: profile._json.email }).then((currentUser) => {
+                    if (currentUser) {
+                        done(null, currentUser);
                     } else {
-                        const newUser = new User({
-                            username: profile._json.name,
+                        new User({
+                            googleId: profile.id,
+                            firstName: profile.name.givenName,
+                            lastName: profile.name.familyName,
                             email: profile._json.email,
-                            city: '-',
-                            state_name: '-',
-                            password: '-',
-                            googleId: profile._json.sub,
-                            firstName: profile._json.given_name,
-                            lastName: profile._json.family_name,
+                        }).save().then((newUser) => {
+                            done(null, newUser);
                         });
-                        newUser.save()
-                            .then((user) => {
-                                done(null, user);
-                            })
-                            .catch((err) => {
-                                done(err);
-                            });
                     }
+                
+
                 });
             } catch (err) {
                 console.error(err);

@@ -7,10 +7,8 @@ import {
     Select,
     FormErrorMessage,
     Heading,
-    Spinner
 } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import _ from "lodash";
 import userService from "../services/userService";
 import UserContext from "../components/UserContext";
 
@@ -28,14 +26,12 @@ function FinishRegister(props) {
         }).catch((err) => {
             console.log(err);
         })
-        if (!registerUser.firstName && !registerUser.lastName && !registerUser.email && !registerUser.password) {
-            
-            if (userFromRegister) {
+
+            if (userFromRegister.email.length>0) {
                 setRegisterUser(userFromRegister);
             } else if (user) {
                 setRegisterUser(user);
             }
-        }
     }, [user]);
 
 
@@ -68,51 +64,41 @@ function FinishRegister(props) {
         console.log("Inside handleFormSubmit");
         setIsLoading(true);
     
-        if (user) {
-            setRegisterUser({...registerUser, state_name: user.state_name, city: user.city});
-        }
-        if (registerUser.state_name === "-") {
-            setStateError(true);
-        } else {
-            setStateError(false);
-        }
+        
     
-        if (registerUser.city === "-") {
-            setCityError(true);
-        } else {
-            setCityError(false);
-        }
+        // Check if state_name is selected, if not set the state error
+        const isStateSelected = registerUser.state_name !== "-";
+        setStateError(!isStateSelected);
     
-        if (registerUser.state_name !== "-" && registerUser.city !== "-") {
+        // Check if city is selected, if not set the city error
+        const isCitySelected = registerUser.city !== "-";
+        setCityError(!isCitySelected);
+    
+        // If both state and city are selected, proceed with user registration
+        if (isStateSelected && isCitySelected) {
             
-            setStateError(false);
-            setCityError(false);
-            userService.register(registerUser).then((response) => {
-                if (response.status === 201 || response.status === 200) {
-                    console.log("User registered successfully")
-                    
-                    console.log(response.data)
-                    userService.isGoogleAccount(response.data.email).then((response) => {
-                        console.log("IsGoogleAccount",response.data);
-                        if(response.data.exists){
-                            setIsLoading(false);
-                            setUser(registerUser);
-                            navigate("/");
-                        }
-                        else{
-                            setIsLoading(false);
-                            setUser({})
-                            navigate("/login");
-                            window.location.reload();
-                        }
-                    }).catch((err) => {console.log(err);});
-
+            userService.register(registerUser).then((res) => { 
+                if(res.data.jwtToken){
+                    localStorage.setItem("jwtToken", res.data.jwtToken);
+                    setUser(registerUser);
+                    setIsLoading(false);
+                    navigate("/");
                 }
-            }).catch((err) => {console.log(err);});
+                else{
+                    setIsLoading(false);
+                    if (res.data.message) {
+                        alert(res.data.message);
+                    }
+                }
+
+            }
+            ).catch((err) => {
+                console.log(err);
+                setIsLoading(false);
+            });
+
         }
-    }
-
-
+    };
         const handleChange = (e) => {
             
             setRegisterUser({

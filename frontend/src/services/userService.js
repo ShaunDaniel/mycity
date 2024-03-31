@@ -28,8 +28,12 @@ function logout() {
   return api.get(`${API_URL}/logout`,{withCredentials:true});
 }
 
-function user_details() {
-  return api.get(`${API_URL}/user-details`,{withCredentials:true});
+function user_details(jwtToken) {
+  return api.get(`${API_URL}/user-details`,{
+    headers: {
+      Authorization: `${jwtToken}`,
+    },
+  });
 }
 
 

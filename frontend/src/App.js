@@ -13,23 +13,28 @@ import userService from "./services/userService.js";
 import UserContext from './components/UserContext';
 
 function App() {
-
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
 
   useEffect(() => {
-        userService.user_details()
+    const jwtToken = localStorage.getItem("jwtToken");
+    if (jwtToken) {
+      console.log("Inside user_details",jwtToken);
+        userService.user_details(jwtToken)
         .then((res) => {
           setUser(res.data.user);
         })
         .catch(() => {
           setUser(null);
         });
-    }, []);
+   
+  } else {
+    setUser(null);
+  } }, []);
 
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-    <ChakraProvider theme={theme}>
+      <ChakraProvider theme={theme}>
         <Navbar/>
         <Routes>
           <Route path="/" element={<Homepage/>} />
@@ -38,10 +43,9 @@ function App() {
           <Route path="/register/2" element={<FinishRegister/>} />
         </Routes>
         <Footer/>
-    </ChakraProvider>
+      </ChakraProvider>
     </UserContext.Provider>
   );
 }
-
 
 export default App;
