@@ -16,7 +16,8 @@ const authRouter = require('./routes/auth');
 
 const app = express();
 const port = process.env.PORT || 3001;
-const allowedOrigins = ['http://localhost:3000',process.env.FRONTEND_URL];
+
+const allowedOrigins = ['http://localhost:3000',`${process.env.FRONTEND_URL}`];
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
