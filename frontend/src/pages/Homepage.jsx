@@ -11,9 +11,9 @@ function Homepage() {
   const navigate = useNavigate()
   // eslint-disable-next-line 
   const {user,setUser} = useContext(UserContext);
+  const urlParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
     if(user!==null){
       if(user && user.city==='-'){
         navigate('/register/2')
@@ -22,31 +22,32 @@ function Homepage() {
     else{
       if (urlParams.has('token')) {
         const token = urlParams.get('token');
+        console.log('Inside urlParams',token)
         localStorage.setItem('jwtToken', `Bearer ${token}`);
-        navigate(window.location.pathname, { replace: true });
+        navigate('/', { replace: true });
         window.location.reload();
       } else {
         return;
       }
   
     }
-  }, [user]);
+  }, [urlParams]);
 
 
 
   return (
-    <Flex direction={'column'} height={'90vh'} overflow={'auto'}>
-      <Stack direction={{ base: "column", lg: "row" }} w={"100%"} h={'fit-content'} justifyContent={'space-between'} bgColor={"#76ABAE"}>
+    <Flex direction={'column'} height={'90vh'} >
+      <Stack direction={{ base: "column", lg: "row" }} w={"100%"}  justifyContent={'space-between'} bgColor={"#76ABAE"}>
         
-        <Flex w={{ base: "80%", lg: "50%" }} justifyContent={'center'} gap={5} mx={{ base: '1rem', xl: '5rem' }} my={{ base: '1rem' }} direction={'column'} h={{ base: "30vh", lg: "50vh" }}>
-          <Heading fontSize={{ base: '0.5rem', sm: '4rem', lg: '1.5rem', xl: '2rem' }}>
+        <Flex w={{ base: "80%", lg: "50%" }}  justifyContent={'center'} gap={5} mx={{ base: '3rem', sm: '4rem', lg: '5rem' }} my={{ base: '6rem', md: '5rem', lg: '2rem' }} direction={'column'} h={{ base: "fit-content", lg: "50vh" }}>
+          <Heading fontSize={{ base: '4rem', lg: '2.5rem', xl: '2rem' }}>
             Empowering Citizens, <br />
             Enabling Smart Governance
           </Heading>
-          <Text fontSize={{ base: '3rem', sm: '2rem', lg: '1rem' }} fontWeight={300}>
+          <Text fontSize={{ base: '2rem', sm: '1.5rem', lg: '1rem' }} fontWeight={300}>
             Report civic issues, track progress, & collaborate with authorities to improve your city.
           </Text>
-          <Button w={'fit-content'} fontSize={{ base: '2rem', lg: '1rem' }} onClick={()=>{navigate('/login')}}>Get Started</Button>
+          <Button w={'fit-content'} fontSize={{ base: '2rem', sm: '1.5rem', lg: '1rem' }} py={{ base: '2rem', sm: '1.5rem', lg: '1rem' }} onClick={()=>{ user ?  navigate(`/feed/${encodeURIComponent(user.city)}`) : navigate('/login')}}>{user ? `${user.city} City Feed` : `Get Started`}</Button>
         </Flex>
 
         <Flex w={'fit-content'} justifyContent={'end'}>

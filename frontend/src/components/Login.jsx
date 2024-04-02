@@ -1,6 +1,6 @@
-import React, { useState,useEffect, useContext } from 'react'
-import { useNavigate} from 'react-router-dom';
-import { Box, Stack, FormControl, FormLabel, FormErrorMessage,Input, Spinner, Button, Text, Heading, Link } from '@chakra-ui/react';
+import React, { useState, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { Box, Stack, FormControl, FormLabel, FormErrorMessage, Input, Spinner, Button, Text, Heading, Link } from '@chakra-ui/react';
 import userService from '../services/userService';
 import UserContext from './UserContext';
 
@@ -41,12 +41,12 @@ function Login() {
     }
 
     userService.isGoogleAccount(credentials.email).then((res) => {
-      if(res.data.exists){
+      if (res.data.exists) {
         setGoogleAccountError(true);
         setIsLoading(false);
         return;
       }
-      else{
+      else {
         setGoogleAccountError(false);
         userService.login(credentials, { withCredentials: true }).then((res) => {
 
@@ -57,7 +57,7 @@ function Login() {
             localStorage.setItem('jwtToken', `${res.data.jwtToken}`);
 
             setIsFormError(false);
-          } else{
+          } else {
             setIsLoading(false);
             setIsFormError(true);
           }
@@ -66,46 +66,46 @@ function Login() {
           setIsFormError(true);
         });
       }
-    }).catch((err) => {}  );
-    
-    
+    }).catch((err) => { });
+
+
 
   }
 
 
   return (
-    <Box maxW={{ base: 'lg', md: "md", lg: 'sm' }} h={'fit-content'} mx="auto" mt={8} p={4}>
-      <Stack spacing={4}>
-        <Heading>Login</Heading>
-        <FormControl isInvalid={isFormError || formIsEmpty || googleAccountError }>
+    <Box maxW={{ base: '3xl', md: "2xl", lg: 'md' }} mx="auto" mt={8} p={4}>
+      <Stack spacing={4} fontSize={{base: '3xl', md: "2rem", lg: 'md'}}>
+        <Heading fontSize={{base: '3rem', md: "3rem", lg: '2rem'}}>Login</Heading>
+        <FormControl isInvalid={isFormError || formIsEmpty || googleAccountError}>
           {isFormError && <FormErrorMessage>Invalid Credentials</FormErrorMessage>}
           {formIsEmpty && <FormErrorMessage>Fill all the details before submitting</FormErrorMessage>}
-          {googleAccountError && <FormErrorMessage>Account already connected with Google!<br/> Please Login using Google</FormErrorMessage>}
+          {googleAccountError && <FormErrorMessage>Account already connected with Google!<br /> Please Login using Google</FormErrorMessage>}
 
         </FormControl>
 
         <FormControl>
-          <FormLabel>Email</FormLabel>
-          <Input id='email' type="email" placeholder="Enter your email" onChange={handleChange} />
+          <FormLabel fontSize={{base: '2rem', md: "2rem", lg: 'md'}}>Email</FormLabel>
+          <Input id='email' type="email" placeholder="Enter your email" fontSize={{base: '2rem', md: "2rem", lg: '1rem'}} p={{base:'2rem',md:'2rem',xl:'1rem'}} borderWidth={'medium'} onChange={handleChange} />
         </FormControl>
         <FormControl>
-          <FormLabel>Password</FormLabel>
-          <Input id="password" type="password" placeholder="Enter your password" onChange={handleChange} />
+          <FormLabel fontSize={{base: '2rem', md: "2rem", lg: 'md'}}>Password</FormLabel>
+          <Input id="password" type="password" placeholder="Enter your password" onChange={handleChange} fontSize={{base: '2rem', md: "2rem", lg: '1rem'}} p={{base:'2rem',md:'2rem',xl:'1rem'}} borderWidth={'medium'}/>
         </FormControl>
         <Button
-        colorScheme="blue"
-        fontSize={{ base: "xx-large", lg: "md" }}
-        py={{ base: "2rem", lg: "1rem" }}
-        type="submit"
-        width="full"
-        onClick={handleSubmit}
-        isLoading={isLoading}
-        loadingText="Logging in"
+          colorScheme="blue"
+          fontSize={{ base: "xx-large", lg: "md" }}
+          py={{ base: "2rem", lg: "1rem" }}
+          type="submit"
+          width="full"
+          onClick={handleSubmit}
+          isLoading={isLoading}
+          loadingText="Logging in"
         >
-            Login
+          Login
         </Button>
         <Text textAlign="center">Or sign in with</Text>
-        <Button colorScheme="red" size="lg"onClick={() => { window.location.href = `${process.env.REACT_APP_API_URL}v1/auth/google` }}>
+        <Button colorScheme="red" size="lg" onClick={() => { window.location.href = `${process.env.REACT_APP_API_URL}v1/auth/google` }}>
           Sign in with Google
         </Button>
         <Text textAlign="center">New user? <strong style={{ cursor: 'pointer' }} onClick={() => { navigate('/register/1') }}>Register here</strong></Text>

@@ -9,6 +9,17 @@ const userSchema = new mongoose.Schema({
     city: { type: String, required: true,default: '-'},
     state_name: { type: String, required: true,default: '-'},
     googleId: { type: String, required: false },
+    votes: [
+      {
+        postId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Post', // replace 'Post' with the name of your Post model
+        },
+        voteType: {
+          type: Number,
+        },
+      }
+    ],
   });
 
   userSchema.pre('save', function(next) {

@@ -12,6 +12,7 @@ router.get("/user-details", (req, res) => {
   const authHeader = req.headers['authorization'];
   console.log(authHeader)
   if (authHeader) {
+    console.log("Inside authHeader"  )
     const token = authHeader.split(' ')[1]; // Bearer <token>
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
@@ -146,6 +147,31 @@ router.post("/register", (req, res) => {
 
 router.get("/cities", (req, res) => {
   res.json(cities);
+});
+
+router.get("/:userId/votes" , (req, res) => {
+  User.findById(req.params.userId)
+  .then((user) => {
+    res.json(user.votes);
+  })
+  .catch((err) => {
+    res.status(400).json(err);
+  });
+});
+
+router.put('/:id/upvotes', async (req, res) => {
+  const userId = req.params.id;
+  const postId = req.body.postId;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { upvotedPosts: postId } },
+      { new: true }
+    );
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 router.get("/google-account/:email", (req, res) => {

@@ -12,13 +12,30 @@ function Nav() {
     const {user,setUser} = useContext(UserContext);
     const navigate = useNavigate();
 
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    useEffect(() => {
+      if (jwtToken) {
+        console.log("Inside user_details",jwtToken);
+          userService.user_details(jwtToken)
+          .then((res) => {
+            setUser(res.data.user);
+          })
+          .catch(() => {
+            setUser(null);
+          });
+     
+    } else {
+      setUser(null);
+    } }, [jwtToken]);
+  
     
     return (
         <Box bgColor={'#222831'} h={"10vh"}>
             <Flex h={'full'} alignItems={'center'} mx={{ base: 5, md: 7, xl: 10 }}>
                 <Flex justifyContent={'space-between'} w={'full'}>
                     <Flex  gap={5} p={5}>
-                    <Text color={'white'} fontSize={{base:'0.5rem',sm:'4rem',lg:'1.5rem',xl:'2rem'}} onClick={()=>{navigate('/')}} cursor={'pointer'}>MyCity</Text>
+                    <Text color={'white'} fontSize={{base:'3rem',md:'3rem',xl:'2rem'}} onClick={()=>{navigate('/')}} cursor={'pointer'}>MyCity</Text>
                     {user && user.city!=='-' && <Text bgColor={'#76ABAE'} alignSelf={'center'} py={1} px={3} rounded={'3rem'} fontSize={{base:'0.25rem',sm:'3rem',lg:'1.25rem',xl:'1rem'}} >
                                         {user.city==='-' ? "Select City" : user.city}
                                         </Text>}
