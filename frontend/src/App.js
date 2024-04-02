@@ -11,27 +11,13 @@ import Footer from "./components/Footer";
 import FinishRegister from "./pages/FinishRegister";
 import userService from "./services/userService.js";
 import UserContext from './components/UserContext';
+import City from "./components/City.jsx";
+import NotFound from "./pages/NotFound";
+import CityFeed from "./pages/CityFeed.jsx";
 
 function App() {
 
   const [user, setUser] = useState();
-
-
-  useEffect(() => {
-    const jwtToken = localStorage.getItem("jwtToken");
-    if (jwtToken) {
-      console.log("Inside user_details",jwtToken);
-        userService.user_details(jwtToken)
-        .then((res) => {
-          setUser(res.data.user);
-        })
-        .catch(() => {
-          setUser(null);
-        });
-   
-  } else {
-    setUser(null);
-  } }, []);
 
 
   return (
@@ -43,6 +29,8 @@ function App() {
           <Route path="/login" element={<Login/>} />
           <Route path="/register/1" element={<Register/>} />
           <Route path="/register/2" element={<FinishRegister/>} />
+          <Route path="/feed/:city" element={<CityFeed user={user} />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer/>
       </ChakraProvider>

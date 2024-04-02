@@ -48,6 +48,13 @@ function updateUser(id, user) {
   return api.put(`${API_URL}/${id}`, user);
 }
 
+function getUserVotes(id) {
+  return api.get(`${API_URL}/${id}/votes`);
+}
+
+function addToUpvotedPosts(id, postId) {
+  return api.put(`${API_URL}/${id}/upvotes`, { postId });
+}
 
 function deleteUser(id) {
   return api.delete(`${API_URL}/${id}`);
@@ -66,6 +73,8 @@ const userService = {
   fetchCities,
   user_details,
   logout,
-  isGoogleAccount
+  isGoogleAccount,
+  getUserVotes,
+  addToUpvotedPosts
 };
 export default userService;
