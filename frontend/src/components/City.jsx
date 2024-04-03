@@ -209,19 +209,9 @@ function City() {
       </Flex>
       {posts.map((post, index) => {
         if(user && user.votes){
-          const vote = user.votes.find((vote) => vote.postId.toString() === post._id.toString());
-          const upvotes = post.votes.filter(vote => vote.type === 1).length;
-          const downvotes = post.votes.filter(vote => vote.type === 0).length;
-          const voteCount = upvotes - downvotes;
-          if(user){
           return (
-            <CityPosts post={post} index={index} voteCount={voteCount} vote={vote} userVotes={userVotes} user={user}/>)
-          }
-          else{
-            return(
-              <></>
-              )
-          }
+            <CityPosts post={post} key={index} userVotes={userVotes} user={user}/>
+            )
         }
       })}
     </Box>

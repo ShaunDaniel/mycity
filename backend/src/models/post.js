@@ -32,6 +32,10 @@ const postSchema = new mongoose.Schema({
     enum: issues,
     required: true,
   },
+  voteCount: {
+    type: Number,
+    default: 0,
+  },
   votes: [{
     userId: {
       type: mongoose.Schema.Types.ObjectId,

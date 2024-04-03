@@ -21,44 +21,60 @@ router.put('/vote', async (req, res) => {
   const { postId, userId, voteType } = req.body;
 
   try {
+    
     const user = await User.findById(userId);
-    let postIdAsObjectId = new ObjectId(String(postId));
-    const existingVote = user.votes.find(vote => vote.postId.toString() === postIdAsObjectId.toString());
+    const post = await Post.findById(postId);
+    const postIdAsObjectId = new ObjectId(String(postId));
+    
+    const existingVote = user.votes.find(vote => vote.postId.toString() === postIdAsObjectId.toString()); // Check if user has already voted on this post
 
-    if (existingVote) {
-      // User has already voted on this post
-      if (existingVote.voteType === voteType) {
-        // User is trying to vote the same way again
-        return res.status(304).json({ message: "User already voted this way on this post. No modification made." });
-      } else {
-        // User is changing their vote
-        existingVote.voteType = voteType;
-        await user.save();
+    if (existingVote) // If user has already voted on this post
+    {
+      if (existingVote.voteType === voteType) // If user is trying to vote the same way again
+      {
+        post.voteCount = voteType===1 ? post.voteCount - 1 : post.voteCount + 1;
+        
+        // User is undoing their vote
+        user.votes = user.votes.filter(vote => vote.postId.toString() !== postIdAsObjectId.toString());
+        post.votes = post.votes.filter(vote => vote.userId.toString() !== userId);
+
+        // Update post's vote count
       }
-    } else {
+      else { // If user is changing their vote
+
+        user.votes = user.votes.map(vote => {
+          if (vote.postId.toString() === postIdAsObjectId.toString()) {
+            vote.voteType = voteType;
+          }
+          return vote;
+        })
+        post.votes = post.votes.map(vote => {
+          if (vote.userId.toString() === userId) {
+            vote.type = voteType;
+          }
+          return vote;
+        })        
+        // Update post's vote count
+        post.voteCount = voteType===1 ? post.voteCount + 2 : post.voteCount - 2;
+      }
+      await user.save();
+      await post.save();
+      res.status(200).send({ message: "Post vote UPDATED successfully", voteCount: post.voteCount,postVotes:post.votes });
+    }
+    else {
       // User has not voted on this post before
       user.votes.push({ postId:postIdAsObjectId, voteType: voteType });
+      post.votes.push({ userId: userId, type: voteType });
+      post.voteCount = voteType===1 ? post.voteCount + 1 : post.voteCount - 1;
+
       await user.save();
+      await post.save();
+
+      // Update post's vote count
+      res.status(200).send({ message: "Post vote ADDED successfully", voteCount: post.voteCount,postVotes:post.votes });
     }
-
-    // Find the post and update its votes
-    const post = await Post.findById(postIdAsObjectId);
-    const existingPostVote = post.votes.find(vote => vote.userId.toString() === userId);
-
-    if (existingPostVote) {
-      // User has already voted on this post
-      existingPostVote.type = voteType;
-    } else {
-      // User has not voted on this post before
-      post.votes.push({ userId: user._id, type: voteType });
-    }
-
-    // Save the post
-    await post.save();
-    res.status(200).json({ message: "Post vote updated successfully",votes:post.votes});
-
-  } catch (error) {
-    // handle error
+ } catch (error) {
+    return res.status(500).send({ message: "Error updating post vote", error: error.message });
   }
 });
 
