@@ -1,60 +1,14 @@
 import React from 'react';
-import { useEffect } from 'react';
-import { Card, Flex, Heading, Tag, Text, Button } from '@chakra-ui/react';
-import { ArrowUpIcon, ArrowDownIcon, ChatIcon } from '@chakra-ui/icons';
-import postService from '../services/postService';
-import UserContext from './UserContext';
-import { useState } from 'react';
-
-const CityPosts = ({ post, vote, index, user, setVotesUpdated, votesUpdated }) => {
-  const [postVoteCount, setPostVoteCount] = useState(post.voteCount);
-
-  const [userVote, setUserVote] = useState(post.votes.find(vote => vote.userId === user._id));
+import { Card, Flex, Heading, Tag, Text, Image, Box, } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import UserVoteComponent from './UserVoteComponent.jsx';
+import { formatDistanceToNow } from 'date-fns';
 
 
+const CityPosts = ({ post, index, loading }) => {
 
 
-  console.log("Inside CityPost", post)
-  console.log("Current User", user)
-  console.log("User Vote", userVote)
-
-
-  useEffect(() => {
-    console.log('postVoteCount has changed', postVoteCount);
-    // Perform your side effect here
-  }, [postVoteCount,userVote]);
-
-  const handleUpvote = (postId) => {
-
-    postService.upvotePost(postId, user._id).then((res) => {
-      console.log("upvoted post", res.data);
-      if(res.data && res.data.postVotes){
-        setUserVote(res.data.postVotes.find(vote => vote.userId === user._id))
-      }
-      else{
-        setUserVote(null)
-      }
-      setPostVoteCount(res.data.voteCount)
-    }).catch((err) => {
-      console.log(err)
-    });
-  };
-
-  const handleDownvote = (postId) => {
-    postService.downvotePost(postId, user._id).then((res) => {
-      console.log("downvoted post", res.data);
-      if(res.data && res.data.postVotes){
-        setUserVote(res.data.postVotes.find(vote => vote.userId === user._id))
-      }
-      else{
-        setUserVote(null)
-      }
-      setPostVoteCount(res.data.voteCount)
-      
-    }).catch((err) => {
-      console.log(err)
-    });
-  };
+  const navigate = useNavigate()
 
   return (
     <>
@@ -70,7 +24,7 @@ const CityPosts = ({ post, vote, index, user, setVotesUpdated, votesUpdated }) =
         justifyContent={"space-between"}>
         <Flex direction={"column"} h={"full"}>
           <Flex w={"full"} justifyContent={"space-between"}>
-            <Heading fontSize="xl">{post.title}</Heading>
+            <Heading fontSize="xl" cursor={'pointer'} onClick={() => { navigate(`/post/${post._id.toString()}`) }}>{post.title}</Heading>
             <Tag
               size={["xxs", "xs", "sm"]}
               w={"fit-content"}
@@ -80,43 +34,16 @@ const CityPosts = ({ post, vote, index, user, setVotesUpdated, votesUpdated }) =
             </Tag>
           </Flex>
           <Text fontSize={"xs"}>
-            {new Date(post.created_at).toLocaleString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
           </Text>
-          <Text mt={4}>{post.description}</Text>
+          <Text mt={4}>  {post.description.length > 100 ? `${post.description.substring(0, 100)}...` : post.description}</Text>
+          <Flex w={'full'} justifyContent={'end'} >
+            <Box boxShadow={'xl'} borderRadius={'2rem'} maxW={'3xs'} cursor={'pointer'} _hover={{ filter: "brightness(0.8)" }} onClick={() => { console.log('Post opened') }}>
+              <Image src={post.image} borderRadius={'2rem'} />
+            </Box>
+          </Flex>
         </Flex>
-        <Flex mt={2}>
-          <Button
-            leftIcon={<ArrowUpIcon />}
-            _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s', transitionBehavior: 'smooth' }}
-            variant={userVote && userVote.type === 1 ? 'solid' : 'outline'}
-            id={post._id}
-            onClick={(e) => {
-              handleUpvote(post._id);
-            }}>
-            Upvote
-          </Button>
-          <Text alignSelf={'center'} mx={5}>{postVoteCount}</Text>
-          <Button
-            leftIcon={<ArrowDownIcon />}
-            _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s', transitionBehavior: 'smooth' }}
-
-            variant={userVote && userVote.type === 0 ? 'solid' : 'outline'}
-            id={post._id}
-            onClick={(e) => {
-              handleDownvote(post._id);
-            }}>
-            Downvote
-          </Button>
-          <Button leftIcon={<ChatIcon />} variant="outline" ml={2}>
-            Comment
-          </Button>
-        </Flex>
+        <UserVoteComponent post={post} loading={!loading} />
       </Card>
 
     </>

@@ -8,17 +8,24 @@ const postService = {
 
   // get posts by city
   getPostsByCity: async (city) => {
-    return await axios.get(`${baseURL}/${encodeURIComponent(city)}`);
+    return await axios.get(`${baseURL}/city/${encodeURIComponent(city)}`);
   },
 
   // get post by id
-  getPostById: async (id) => {
+  getPost: async (id) => {
+    
     return await axios.get(`${baseURL}/${id}`);
   },
 
   // create a post
-  createPost: async (data) => {
-    return await axios.post(baseURL, data);
+  createPost: async (formData) => {
+    console.log("inside create post")
+    console.log("form data",formData);  
+    return await axios.post(baseURL, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   // update a post

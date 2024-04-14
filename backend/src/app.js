@@ -38,7 +38,11 @@ app.use(cors({
     },
     credentials: true
 }));
-app.use("/", rateLimit({ windowMs: 15 * 60 * 1000, max: 100 })); // Apply rate limiting middleware
+const limiter = rateLimit({
+    windowMs: 1000, // 1 second
+    max: 10 // limit each IP to 10 requests per sec
+  });
+  app.use(limiter);
 app.use(helmet()); // Apply helmet middleware for security headers
 app.use(helmet.contentSecurityPolicy({
     directives: {

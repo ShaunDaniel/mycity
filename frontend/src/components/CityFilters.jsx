@@ -6,27 +6,26 @@ function CityFilters({ FilterContext }) {
   const { filters, setFilters } = useContext(FilterContext);
 
   const issues = [
-    "Road-Related Issues",
-    "Water-Related Issues",
-    "Waste Management Issues",
-    "Electricity-Related Issues",
-    "Public Infrastructure Issues",
-    "Environmental Issues",
-    "Public Health and Safety Issues",
-    "Public Transportation Issues",
-    "Education and Social Infrastructure Issues",
-    "Emergency and Disaster-Related Issues"
+    "Road-Related",
+    "Water-Related",
+    "Waste Management",
+    "Electricity-Related",
+    "Public Infrastructure",
+    "Environmental",
+    "Public Health and Safety",
+    "Public Transportation",
+    "Education and Social Infrastructure",
+    "Emergency and Disaster-Related"
   ];
 
   const handleFilterChange = (event) => {
-    const filterName = event.target.dataset.filter;
-  
     setFilters({
       ...filters,
-      [filterName]: event.target.value,
+      [event.target.name]: event.target.value,
     });
+    console.log("Filtering by", event.target.name, event.target.value )
+
   };
-  
 
   return (
     <Box p={5}>
@@ -38,7 +37,7 @@ function CityFilters({ FilterContext }) {
         <Heading as="h4" size="sm" mb={1}>
           Date
         </Heading>
-        <Select placeholder="Select date" data-filter="date" onChange={handleFilterChange}>
+        <Select placeholder="Select date" name="date" onChange={handleFilterChange}>
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
         </Select>
@@ -48,7 +47,7 @@ function CityFilters({ FilterContext }) {
         <Heading as="h4" size="sm" mb={1}>
           Category
         </Heading>
-        <Select placeholder="Select category" data-filter="category" onChange={handleFilterChange}>
+        <Select placeholder="Select category" name="category" onChange={handleFilterChange}>
           {issues.map((issue, index) => (
             <option key={index} value={issue}>
               {issue}
@@ -61,7 +60,7 @@ function CityFilters({ FilterContext }) {
         <Heading as="h4" size="sm" mb={1}>
           Upvotes
         </Heading>
-        <Select placeholder="Select upvotes" data-filter="upvotes" onChange={handleFilterChange}>
+        <Select placeholder="Select upvotes" name="upvotes" onChange={handleFilterChange}>
           <option value="most">Most</option>
           <option value="least">Least</option>
         </Select>
@@ -71,7 +70,7 @@ function CityFilters({ FilterContext }) {
         <Heading as="h4" size="sm" mb={1}>
           Resolved
         </Heading>
-        <Select placeholder="Select resolved status" data-filter="resolved" onChange={handleFilterChange}>
+        <Select placeholder="Select resolved status" name="resolved" onChange={handleFilterChange}>
           <option value="resolved">Resolved</option>
           <option value="unresolved">Unresolved</option>
         </Select>

@@ -11,9 +11,9 @@ import Footer from "./components/Footer";
 import FinishRegister from "./pages/FinishRegister";
 import userService from "./services/userService.js";
 import UserContext from './components/UserContext';
-import City from "./components/City.jsx";
 import NotFound from "./pages/NotFound";
 import CityFeed from "./pages/CityFeed.jsx";
+import Post from "./components/Post.jsx";
 
 function App() {
 
@@ -30,6 +30,7 @@ function App() {
           <Route path="/register/1" element={<Register/>} />
           <Route path="/register/2" element={<FinishRegister/>} />
           <Route path="/feed/:city" element={<CityFeed user={user} />} />
+          <Route path="/post/:id" element={<Post />} /> 
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer/>

@@ -1,18 +1,17 @@
 const mongoose = require('mongoose');
 
-
 const issues = [
-    "Road-Related Issues",
-    "Water-Related Issues",
-    "Waste Management Issues",
-    "Electricity-Related Issues",
-    "Public Infrastructure Issues",
-    "Environmental Issues",
-    "Public Health and Safety Issues",
-    "Public Transportation Issues",
-    "Education and Social Infrastructure Issues",
-    "Emergency and Disaster-Related Issues"
-  ];
+  "Road-Related",
+  "Water-Related",
+  "Waste Management",
+  "Electricity-Related",
+  "Public Infrastructure",
+  "Environmental",
+  "Public Health and Safety",
+  "Public Transportation",
+  "Education and Social Infrastructure",
+  "Emergency and Disaster-Related"
+];
 
 const postSchema = new mongoose.Schema({
   title: {
@@ -45,6 +44,9 @@ const postSchema = new mongoose.Schema({
       type: Number,
     }
   }],
+  image: {
+    type: String,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

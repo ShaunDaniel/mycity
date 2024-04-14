@@ -15,6 +15,10 @@ function register(user) {
   return api.post(`${API_URL}/register`, user);
 }
 
+function getUser(id) {
+  return api.get(`${API_URL}/${id}`);
+}
+
 function isGoogleAccount(email) {
   return api.get(`${API_URL}/google-account/${email}`);
 
@@ -75,6 +79,7 @@ const userService = {
   logout,
   isGoogleAccount,
   getUserVotes,
-  addToUpvotedPosts
+  addToUpvotedPosts,
+  getUser
 };
 export default userService;
