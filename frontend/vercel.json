@@ -1,7 +1,1 @@
-{
-  "rewrites":  [
-    {"source": "/(.*)",
-    "destination": "https://mycity-backend.onrender.com/"
-  }
-  ]
-}
+{ "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }] }
