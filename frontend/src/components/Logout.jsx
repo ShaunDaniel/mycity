@@ -17,7 +17,7 @@ function Logout() {
     };
 
     return(
-        <Icon as={MdLogout} color={'white'} boxSize={6} alignSelf={'center'} cursor={'pointer'} onClick={()=>{handleLogout()}}></Icon>
+        <Icon as={MdLogout} color={'white'} boxSize={{base:15,md:10,xl:5}} alignSelf={'center'} cursor={'pointer'} onClick={()=>{handleLogout()}}></Icon>
     )
 }
 

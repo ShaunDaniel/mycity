@@ -15,6 +15,10 @@ function register(user) {
   return api.post(`${API_URL}/register`, user);
 }
 
+function getUser(id) {
+  return api.get(`${API_URL}/${id}`);
+}
+
 function isGoogleAccount(email) {
   return api.get(`${API_URL}/google-account/${email}`);
 
@@ -48,6 +52,13 @@ function updateUser(id, user) {
   return api.put(`${API_URL}/${id}`, user);
 }
 
+function getUserVotes(id) {
+  return api.get(`${API_URL}/${id}/votes`);
+}
+
+function addToUpvotedPosts(id, postId) {
+  return api.put(`${API_URL}/${id}/upvotes`, { postId });
+}
 
 function deleteUser(id) {
   return api.delete(`${API_URL}/${id}`);
@@ -66,6 +77,9 @@ const userService = {
   fetchCities,
   user_details,
   logout,
-  isGoogleAccount
+  isGoogleAccount,
+  getUserVotes,
+  addToUpvotedPosts,
+  getUser
 };
 export default userService;

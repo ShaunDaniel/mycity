@@ -7,11 +7,13 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+
 router.get("/user-details", (req, res) => {
   console.log("Inside user-details");
   const authHeader = req.headers['authorization'];
   console.log(authHeader)
   if (authHeader) {
+    console.log("Inside authHeader"  )
     const token = authHeader.split(' ')[1]; // Bearer <token>
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
@@ -25,6 +27,14 @@ router.get("/user-details", (req, res) => {
     res.status(401).json({ message: "Token not found" });
   }
 });
+
+
+
+router.get("/cities", (req, res) => {
+  res.json(cities);
+});
+
+
 router.get("/email-exists/:email", (req, res) => {
   const { email } = req.params;
   User.findOne({ email })
@@ -35,6 +45,55 @@ router.get("/email-exists/:email", (req, res) => {
       res.status(400).json(err);
     });
 });
+
+
+router.get("/:userId/votes" , (req, res) => {
+  User.findById(req.params.userId)
+  .then((user) => {
+    res.json(user.votes);
+  })
+  .catch((err) => {
+    res.status(400).json(err);
+  });
+});
+
+router.put('/:id/upvotes', async (req, res) => {
+  const userId = req.params.id;
+  const postId = req.body.postId;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { upvotedPosts: postId } },
+      { new: true }
+    );
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get("/:id", (req, res) => {
+  User.findById(req.params.id)
+    .then((user) => res.json({firstName:user.firstName,lastName:user.lastName,email:user.email,city:user.city,state_name:user.state_name}))
+    .catch((err) => res.status(400).json(err));
+})
+
+
+router.get("/google-account/:email", (req, res) => {
+  User.findOne({ email: req.params.email })
+    .then((user) => {
+      console.log("Checking google account",user)
+      if (user.googleId) {
+        res.json({ exists: true });
+      } else {
+        res.json({ exists: false });
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
 
 // Login route
 router.post("/login", async (req, res) => {
@@ -144,23 +203,6 @@ router.post("/register", (req, res) => {
   });
 });
 
-router.get("/cities", (req, res) => {
-  res.json(cities);
-});
 
-router.get("/google-account/:email", (req, res) => {
-  User.findOne({ email: req.params.email })
-    .then((user) => {
-      console.log("Checking google account",user)
-      if (user.googleId) {
-        res.json({ exists: true });
-      } else {
-        res.json({ exists: false });
-      }
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-    });
-});
 
 module.exports = router;
