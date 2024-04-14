@@ -47,7 +47,7 @@ MyCityApp is a web application that empowers citizens to report civic issues in 
 
 2. Navigate to the project directory:
    ```
-   cd mycity-app
+   cd mycity
    ```
 
 3. Install backend dependencies:
