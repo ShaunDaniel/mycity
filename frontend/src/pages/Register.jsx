@@ -173,7 +173,7 @@ function Register() {
           error={passwordError}
           isRequired
         />
-        <Text cursor={'pointer'} onClick={()=>{navigate('/login')}} mb={5}>Already have an account?</Text>
+        <Text cursor={'pointer'} _hover={{textDecoration:'underline'}} onClick={()=>{navigate('/login')}} mb={5}>Already have an account?</Text>
         
 
         <Button

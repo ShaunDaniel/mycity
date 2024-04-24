@@ -2,8 +2,7 @@ import { Box, Heading, Select,Button } from '@chakra-ui/react';
 import { useContext } from 'react';
 
 
-function CityFilters({ FilterContext }) {
-  const { filters, setFilters } = useContext(FilterContext);
+function CityFilters({ filters,setFilters }) {
 
   const issues = [
     "Road-Related",

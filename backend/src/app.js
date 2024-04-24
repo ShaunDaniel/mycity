@@ -20,7 +20,7 @@ const port = process.env.PORT || 3001;
 const allowedOrigins = ['http://localhost:3000',`${process.env.FRONTEND_URL}`];
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
+mongoose.connect(process.env.MONGODB_URL).then(() => {
     console.log("Connected to MongoDB");
 }).catch((error) => {console.log(error)});
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../models/post');
 const User = require('../models/user');
+const Area = require('../models/area');
 const ObjectId = require('mongodb').ObjectId;
 const cloudinary = require('../config/cloudinaryConfig');
 const multer = require('multer');
@@ -18,6 +19,31 @@ router.get('/city/:cityName', async (req, res) => {
   }
 });
 
+
+router.get('/area', async (req, res) => {
+  try {
+    const areas = await Area.find();
+    res.json(areas);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post('/area', async (req, res) => {
+  try {
+    const newArea = new Area({
+      ...req.body,
+    });
+
+    const savedArea = await newArea.save();
+    res.json(savedArea);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+
+});
+
+
 router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -30,26 +56,31 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const newPost = new Post({
       ...req.body,
       image: '' // Temporarily set image to an empty string
     });
-    console.log("new post",newPost);
+    newPost.area = newPost.area.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    console.log("received newPost",newPost)
     const savedPost = await newPost.save();
-    // Now that we have the post_id, we can upload the image to Cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      public_id: `${req.body.user}_${savedPost._id}` // Set the public_id to user_id_post_id
-    });
 
-    // Update the post with the URL of the uploaded image
-    savedPost.image = result.secure_url;
-    await savedPost.save();
+    // Check if image is included in form data
+    if (req.file) {
+      // Now that we have the post_id, we can upload the image to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        public_id: `${req.body.user}_${savedPost._id}` // Set the public_id to user_id_post_id
+      });
+
+      // Update the post with the URL of the uploaded image
+      savedPost.image = result.secure_url;
+      await savedPost.save();
+    }
+
     res.json(savedPost);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 

@@ -6,9 +6,7 @@ import UserContext from './UserContext';
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const [isFormError, setIsFormError] = useState(false);
-  const [googleAccountError, setGoogleAccountError] = useState(false);
-  const [formIsEmpty, setFormIsEmpty] = useState(false);
+  const [formError, setFormError] = useState('');
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const { user, setUser } = useContext(UserContext);
 
@@ -33,55 +31,70 @@ function Login() {
     event.preventDefault();
     if (credentials.email.trim() === '' || credentials.password.trim() === '') {
       setIsLoading(false);
-      setFormIsEmpty(true);
+      setFormError('Please fill all the details before submitting!');
       setTimeout(() => {
-        setFormIsEmpty(false);
+        setFormError('')
       }, 5000)
       return;
     }
 
-    userService.isGoogleAccount(credentials.email).then((res) => {
-      if (res.data.exists) {
-        setGoogleAccountError(true);
+    userService.userExists(credentials.email).then((res) => {
+      if (!res.data.exists) {
         setIsLoading(false);
-        return;
+        setFormError('User not registered!');
       }
-      else {
-        setGoogleAccountError(false);
-        userService.login(credentials, { withCredentials: true }).then((res) => {
-
-          if (res.status !== 401 && res.status !== 500) {
-            navigate('/');
-            window.location.reload();
-
-            localStorage.setItem('jwtToken', `${res.data.jwtToken}`);
-
-            setIsFormError(false);
-          } else {
+      else{
+        userService.isGoogleAccount(credentials.email).then((res) => {
+          if (res.data.exists) {
+            setFormError('Account already connected with Google! Please Login using Google');
             setIsLoading(false);
-            setIsFormError(true);
+            return;
           }
-        }).catch((err) => {
-          setIsLoading(false);
-          setIsFormError(true);
-        });
-      }
-    }).catch((err) => { });
+          else {
+            setFormError('');
+            userService.login(credentials, { withCredentials: true }).then((res) => {
+
+              if (res.status !== 401 && res.status !== 500) {
+                navigate('/');
+                window.location.reload();
+    
+                localStorage.setItem('jwtToken', `${res.data.jwtToken}`);
+                setFormError('');
+                } else {
+                setIsLoading(false);
+                setFormError('Invalid Credentials');
+              }
+            }).catch((err) => {
+              setIsLoading(false);
+              setFormError('Invalid Credentials');
+            });
+          }
+        }).catch((err) => { })
+        };
+      }); 
+
+    
 
 
 
-  }
+  
+    }
 
 
   return (
     <Box maxW={{ base: '3xl', md: "2xl", lg: 'md' }} mx="auto" mt={8} p={4}>
       <Stack spacing={4} fontSize={{base: '3xl', md: "2rem", lg: 'md'}}>
         <Heading fontSize={{base: '3rem', md: "3rem", lg: '2rem'}}>Login</Heading>
-        <FormControl isInvalid={isFormError || formIsEmpty || googleAccountError}>
+        <FormControl isInvalid={formError.length>0}>
+          {
+            <FormControl isInvalid={!!formError}>
+              {formError && <FormErrorMessage>{formError}</FormErrorMessage>}
+            </FormControl>
+          /* 
           {isFormError && <FormErrorMessage>Invalid Credentials</FormErrorMessage>}
           {formIsEmpty && <FormErrorMessage>Fill all the details before submitting</FormErrorMessage>}
           {googleAccountError && <FormErrorMessage>Account already connected with Google!<br /> Please Login using Google</FormErrorMessage>}
-
+          {userNotRegisteredError && <FormErrorMessage>User not registered!</FormErrorMessage>} */}
         </FormControl>
 
         <FormControl>
