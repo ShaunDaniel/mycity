@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import UserContext from './UserContext';
 
 const UserVoteComponent = ({ post, loading }) => {
+    console.log("iNSIDE UserVoteComponent",post)
     const { user, setUser } = useContext(UserContext);
     const [postVoteCount, setPostVoteCount] = useState(post.voteCount);
     const [userVote, setUserVote] = useState(post.votes.find(vote => vote.userId === user._id));
@@ -48,7 +49,7 @@ const UserVoteComponent = ({ post, loading }) => {
     };
     return (
         <>
-        <Flex>
+        <Flex alignItems={'center'}>
             <Skeleton isLoaded={loading}>
                 <Button
                     leftIcon={<ArrowUpIcon />}

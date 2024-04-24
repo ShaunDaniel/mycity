@@ -3,7 +3,6 @@ import HomepageFeatureTab from '../components/HomepageFeatureTab'
 import { useNavigate } from 'react-router-dom';
 import { useEffect,useContext } from 'react';
 import UserContext from '../components/UserContext';
-import userService from '../services/userService';
 
 
 function Homepage() {

@@ -6,7 +6,7 @@ import {
     FormLabel,
     Select,
     FormErrorMessage,
-    Heading,
+    Text
 } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import userService from "../services/userService";
@@ -113,9 +113,9 @@ function FinishRegister(props) {
 return(
     <>
             <Box maxW={{ base: "80vw", xl: "md" }} mx="auto" my={8} p={{ base: "7rem", xl: "3rem" }} borderWidth={1} borderRadius="md" boxShadow="md">
-                        <Heading textAlign={'center'} >Where are you from?</Heading>
+                        <Text as="b" textAlign={'left'} fontSize={'2xl'} >Where are you from?</Text>
         
-                        <FormControl id="state_name" mb={4} isInvalid={stateError}>
+                        <FormControl id="state_name" my={4} isInvalid={stateError}>
                             <FormLabel fontSize={{ base: 'xx-large', lg: 'md' }}>State</FormLabel>
                             <Select value={user ? user.state_name: ''} onChange={updateCityList} fontSize={{ base: 'x-large', lg: 'md' }} placeholder={registerUser.state_name==='-' ? 'Select your state' : registerUser.state_name} required>
                             {cities.map((city, key) => { 

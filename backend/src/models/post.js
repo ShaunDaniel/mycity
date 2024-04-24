@@ -31,6 +31,14 @@ const postSchema = new mongoose.Schema({
     enum: issues,
     required: true,
   },
+  resolved: {
+    type: Boolean,
+    default: false,
+  },
+  area: {
+    type: String,
+    required: true,
+  },
   voteCount: {
     type: Number,
     default: 0,
