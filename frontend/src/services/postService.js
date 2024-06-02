@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const baseURL = `${process.env.REACT_APP_API_URL}api/posts`; // replace with your API base URL
 
 
@@ -13,9 +12,28 @@ const postService = {
 
   // get post by id
   getPost: async (id) => {
-    
-    return await axios.get(`${baseURL}/${id}`);
+    try {
+      const postData = await axios.get(`${baseURL}/${id}`);
+      return postData;
+    }
+    catch (error) {
+      return error.response;
+    }
+
   },
+
+    // get post by id
+    getPostsByUser: async (user_id) => {
+      try {
+        const postData = await axios.get(`${baseURL}/user/${user_id}`);
+        return postData.data;
+      }
+      catch (error) {
+        return error.response;
+      }
+  
+    },
+  
 
   // create a post
   createPost: async (formData) => {
@@ -44,6 +62,19 @@ const postService = {
 
   downvotePost: async (postId,userId) => {
     return await axios.put(`${baseURL}/vote`,{postId:postId,userId:userId,voteType:0});
+  },
+
+  getPostComments: async (postId) => {
+    return await axios.get(`${baseURL}/comments/${postId}`);
+  },
+
+  addComment: async (postId, userId, comment) => {
+    return await axios.post(`${baseURL}/comments/${postId}`, { userId, text: comment });
+  },
+
+  addReply: async (postId, userId, commentId,text) => {
+    return await axios.post(`${baseURL}/comments/${postId}/${commentId}`, { userId:userId, text: text});
+    
   },
 };
 

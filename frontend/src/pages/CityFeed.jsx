@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext, useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 
 import { Box, Heading, Text, Flex, Button, Skeleton, Modal, ModalOverlay, useDisclosure, SimpleGrid, Menu, MenuButton, MenuList } from "@chakra-ui/react";
@@ -8,14 +8,15 @@ import { AddIcon } from "@chakra-ui/icons";
 
 import postService from "../services/postService"; // import the service that fetches posts
 import userService from "../services/userService";
-
+import UserContext from "../components/UserContext";
 import NewPostModal from "../components/NewPostModal";
 import CityPosts from "../components/CityPost";
 
 
-function CityFeed({ user }) {
+function CityFeed() {
   const { city } = useParams();
 
+  const {user, setUser } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [userVotes, setUserVotes] = useState({});
   const { isOpen: isAddPostOpen, onOpen: onAddPostOpen, onClose: onAddPostClose } = useDisclosure();

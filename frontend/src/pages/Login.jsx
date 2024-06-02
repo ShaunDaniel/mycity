@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Box, Stack, FormControl, FormLabel, FormErrorMessage, Input, Spinner, Button, Text, Heading, Link } from '@chakra-ui/react';
+import { Box, Stack, FormControl, FormLabel, FormErrorMessage, Input, Button, Text, Heading } from '@chakra-ui/react';
 import userService from '../services/userService';
-import UserContext from './UserContext';
+import UserContext from '../components/UserContext';
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +57,6 @@ function Login() {
               if (res.status !== 401 && res.status !== 500) {
                 navigate('/');
                 window.location.reload();
-    
                 localStorage.setItem('jwtToken', `${res.data.jwtToken}`);
                 setFormError('');
                 } else {
@@ -90,11 +89,7 @@ function Login() {
             <FormControl isInvalid={!!formError}>
               {formError && <FormErrorMessage>{formError}</FormErrorMessage>}
             </FormControl>
-          /* 
-          {isFormError && <FormErrorMessage>Invalid Credentials</FormErrorMessage>}
-          {formIsEmpty && <FormErrorMessage>Fill all the details before submitting</FormErrorMessage>}
-          {googleAccountError && <FormErrorMessage>Account already connected with Google!<br /> Please Login using Google</FormErrorMessage>}
-          {userNotRegisteredError && <FormErrorMessage>User not registered!</FormErrorMessage>} */}
+}
         </FormControl>
 
         <FormControl>
