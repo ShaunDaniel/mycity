@@ -1,37 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, Flex, Card, useDisclosure, Modal, ModalOverlay, ModalContent, ModalCloseButton, Avatar, Text, Tag, Skeleton, Heading, Button, Collapse } from "@chakra-ui/react";
 import { ChatIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import postService from '../services/postService'; // Import your postService
-import UserVoteComponent from './UserVoteComponent';
+import UserVoteComponent from '../components/UserVoteComponent';
 import userService from '../services/userService';
 import { formatDistanceToNow } from 'date-fns';
+import Comments from '../components/Comments';
+import UserContext from '../components/UserContext';
 
 const Post = () => {
     const { isOpen: isImageOpen, onOpen: onImageOpen, onClose: onImageClose } = useDisclosure();
     const { isOpen: isCommentOpen, onToggle: onCommentToggle } = useDisclosure();
     const navigate = useNavigate();
-    const { id } = useParams(); // Get the ID from the URL
-    const [post, setPost] = useState(null); // Initialize state for the post
+    const { id } = useParams(); 
+
+    const [post, setPost] = useState(null); 
     const [cityPosts, setCityPosts] = useState(null);
 
-    const [fetchedUser, setUser] = useState(null);
-    // eslint-disable-next-line
-    const [isLoading, setIsLoading] = useState(true); // Initialize loading state
+    const {user, setUser } = useContext(UserContext);
+
+
+    const [fetchedUser, setFetchedUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Fetch the post details when the component mounts
         const fetchPost = async () => {
             setIsLoading(true);
             console.log("fetching post", id)
-            const fetchedPost = await postService.getPost(id); // Replace with your actual API call
-            const fetchedUserfromService = await userService.getUser(fetchedPost.data.user)
-            console.log("fetched post", fetchedPost.data)
-            setPost(fetchedPost.data);
-            setUser(fetchedUserfromService.data);
-            const cityPostsData = await postService.getPostsByCity(fetchedPost.data.city);
-            setCityPosts(cityPostsData.data.posts);
-            setIsLoading(false);
+            const fetchedPost = await postService.getPost(id); 
+
+            if(fetchedPost.status === 404){
+                console.log(fetchedPost)
+                navigate('/404')
+            }
+            else{
+
+                const fetchedUserfromService = await userService.getUser(fetchedPost.data.user)
+                console.log("fetched post", fetchedPost.data)
+                setPost(fetchedPost.data);
+                setFetchedUser(fetchedUserfromService.data);
+                const cityPostsData = await postService.getPostsByCity(fetchedPost.data.city);
+                setCityPosts(cityPostsData.data.posts);
+                setIsLoading(false);
+            }
+
         };
 
         fetchPost();
@@ -93,9 +107,9 @@ const Post = () => {
                             </Flex>
 
                             <Collapse in={isCommentOpen} animateOpacity>
-                                <Card w={'80%'} h={'fit-content'} p={2} mx={10} dropShadow={'xl'} my={5}>
-                                    Comments coming soon! (working on it lol)
-                                </Card>
+                                <Flex direction={'column'} w={'80%'} h={'fit-content'} p={2} mx={10} dropShadow={'xl'} my={5}>
+                                    <Comments userId={user._id} postId={post._id}/>
+                                </Flex>
                             </Collapse>
                         </Flex>
                     </Flex>

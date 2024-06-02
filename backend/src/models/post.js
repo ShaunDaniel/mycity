@@ -13,6 +13,16 @@ const issues = [
   "Emergency and Disaster-Related"
 ];
 
+const commentSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  text: { type: String, required: true },
+  createdAt: { type: Date, required: true },
+  replies: [this] // Recursive reference to allow for nested comments
+});
+
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -22,6 +32,8 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  comments: [commentSchema],
+
   city: {
     type: String,
     required: true,

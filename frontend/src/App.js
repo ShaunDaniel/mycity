@@ -2,18 +2,18 @@ import "./App.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Routes, Route} from 'react-router-dom';
-import Login from "./components/Login";
+import Login from "./pages/Login";
 import Navbar from "./components/Nav";
 import Register from "./pages/Register";
 import Homepage from "./pages/Homepage";
 import theme from "./theme";
 import Footer from "./components/Footer";
 import FinishRegister from "./pages/FinishRegister";
-import userService from "./services/userService.js";
 import UserContext from './components/UserContext';
 import NotFound from "./pages/NotFound";
 import CityFeed from "./pages/CityFeed.jsx";
-import Post from "./components/Post.jsx";
+import Post from "./pages/Post.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function App() {
 
@@ -29,8 +29,9 @@ function App() {
           <Route path="/login" element={<Login/>} />
           <Route path="/register/1" element={<Register/>} />
           <Route path="/register/2" element={<FinishRegister/>} />
-          <Route path="/feed/:city" element={<CityFeed user={user} />} />
+          <Route path="/feed/:city" element={<CityFeed />} />
           <Route path="/post/:id" element={<Post />} /> 
+          <Route path="/profile/:id" element={<Profile />} /> 
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer/>
